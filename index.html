@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafío Cyber-Tech</title>
+    <title>Cyber Defense - Omega Virus</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         body {
-            background-color: #0b0f19;
-            color: #f8fafc;
+            background-color: #030308;
+            color: #fff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -24,47 +25,37 @@
             position: relative;
         }
 
-        /* CARD DE INTERFAZ GENERAL */
-        .card {
-            background: #1e293b;
-            border: 2px solid #38bdf8;
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 550px;
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .container {
             width: 90%;
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+            max-width: 650px;
+            background: #0f172a;
+            border: 3px solid #38bdf8;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
             text-align: center;
             position: relative;
             z-index: 10;
-            transition: all 0.3s ease;
         }
 
         h1, h2 {
             color: #38bdf8;
             margin-bottom: 15px;
-        }
-
-        p {
-            margin-bottom: 20px;
-            color: #cbd5e1;
-            line-height: 1.5;
+            text-transform: uppercase;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 6px;
             border: 2px solid #334155;
-            background: #0f172a;
-            color: #fff;
-            font-size: 1rem;
+            background: #020617;
+            color: #00ff66;
+            font-size: 1.1rem;
             margin-bottom: 20px;
-            outline: none;
             text-align: center;
-        }
-
-        input[type="text"]:focus {
-            border-color: #38bdf8;
+            outline: none;
         }
 
         .btn {
@@ -72,177 +63,197 @@
             color: white;
             border: none;
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
         }
 
-        .btn:hover {
-            background: #0369a1;
-        }
+        .btn:hover { background: #0369a1; }
 
-        .btn:active {
-            transform: scale(0.96);
-        }
-
-        /* OPCIONES DE PREGUNTAS NORMALES */
-        .options-list {
+        /* --- LISTA DE PREGUNTAS Y ANIMACIÓN CAÍDA --- */
+        .answers-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
+            margin-top: 15px;
+            position: relative;
         }
 
-        .option-btn {
-            background: #334155;
+        .answer-btn {
+            background: #1e293b;
             color: #fff;
-            border: 2px solid transparent;
+            border: 2px solid #334155;
             padding: 14px;
-            border-radius: 10px;
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 1rem;
+            cursor: pointer;
             text-align: left;
             transition: background 0.2s;
+            position: relative;
         }
 
-        .option-btn:hover {
-            background: #475569;
+        .answer-btn:hover {
+            background: #334155;
             border-color: #38bdf8;
         }
 
-        /* EFECTO COLAPSO / GLITCH */
-        .glitch-active {
-            animation: shakeGlitch 0.5s infinite;
-            filter: invert(1) hue-rotate(180deg);
+        /* Animación Física de Caída de Respuestas */
+        .fall-1 { animation: fallDown 0.8s forwards cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+        .fall-2 { animation: fallDown 1.0s forwards cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+        .fall-3 { animation: fallDown 1.2s forwards cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+
+        @keyframes fallDown {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(45deg); opacity: 0; }
         }
 
-        @keyframes shakeGlitch {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            20% { transform: translate(-10px, 10px) rotate(-2deg); }
-            40% { transform: translate(10px, -5px) rotate(2deg); }
-            60% { transform: translate(-15px, -10px) rotate(-1deg); }
-            80% { transform: translate(15px, 10px) rotate(3deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
-
-        /* CANVAS DE SPACE INVADERS */
-        #gameCanvas {
+        /* --- BANNER VIRUS DETECTADO --- */
+        #warningOverlay {
             display: none;
-            border: 3px solid #00ff66;
-            border-radius: 10px;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(185, 28, 28, 0.95);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: flashRed 0.3s infinite alternate;
+        }
+
+        @keyframes flashRed {
+            from { background: rgba(185, 28, 28, 0.95); }
+            to { background: rgba(69, 10, 10, 0.98); }
+        }
+
+        .warning-symbol {
+            font-size: 80px;
+            margin-bottom: 10px;
+            animation: pulse 0.4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
+        /* --- CANVAS DE JEFE OMEGA FLOWEY --- */
+        #bossCanvas {
+            display: none;
+            border: 3px solid #ff0055;
+            border-radius: 8px;
             background-color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            box-shadow: 0 0 35px rgba(255, 0, 85, 0.5);
             max-width: 100%;
         }
 
-        /* VENTANAS POP-UP DE ESTAFAS */
-        .popup-window {
-            position: absolute;
-            width: 260px;
-            background: #e2e8f0;
+        /* --- ANUNCIOS POP-UP MASIVOS --- */
+        .scam-popup {
+            position: fixed;
+            width: 280px;
+            background: #f1f5f9;
             color: #0f172a;
-            border: 3px solid #ef4444;
+            border: 3px solid #dc2626;
             border-radius: 6px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            z-index: 100;
-            animation: popupBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 200;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-family: Arial, sans-serif;
         }
 
-        .popup-header {
-            background: #ef4444;
+        .scam-header {
+            background: #dc2626;
             color: white;
-            padding: 5px 10px;
+            padding: 6px 10px;
             font-weight: bold;
             font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
 
-        .popup-body {
+        .scam-body {
             padding: 12px;
             font-size: 0.85rem;
             text-align: center;
         }
 
-        .popup-btn {
-            background: #22c55e;
+        .scam-btn {
+            background: #16a34a;
             color: white;
             border: none;
             padding: 6px 12px;
             border-radius: 4px;
             font-weight: bold;
             margin-top: 8px;
-            font-size: 0.75rem;
             cursor: pointer;
         }
 
-        @keyframes popupBounce {
-            from { transform: scale(0); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
         }
 
-        /* CONTENEDOR DE ENCUESTA FINAL */
-        .feedback-box {
-            position: relative;
-            min-height: 180px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        #btnNo {
-            position: absolute;
-            background: #ef4444;
-            transition: left 0.15s ease, top 0.15s ease;
-        }
-
-        #btnSi {
-            background: #22c55e;
-            margin-right: 15px;
+        /* --- RELOJ DE LIMPIEZA --- */
+        #timerBanner {
+            display: none;
+            position: fixed;
+            top: 20px;
+            background: #dc2626;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            z-index: 300;
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px #dc2626;
         }
     </style>
 </head>
 <body>
 
-<!-- 1. REGISTRO INICIAL -->
-<div class="card" id="welcomeCard">
-    <h1>👾 Misión Tecnología</h1>
-    <p>Ingresa tu nombre o el de tu equipo para comenzar el test:</p>
-    <input type="text" id="playerName" placeholder="Nombre / Equipo" maxlength="20" autocomplete="off">
-    <button class="btn" onclick="startQuiz()">Comenzar Test ➔</button>
+<!-- RELOJ DE SOBREVIVENCIA DE POPUPS -->
+<div id="timerBanner">🛡️ LIMPIANDO ADWARE EN PROCESO: <span id="timerSeconds">20</span>s</div>
+
+<!-- 1. REGISTRO -->
+<div class="container" id="welcomeCard">
+    <h1>👾 Misión Seguridad</h1>
+    <p>Ingresa el nombre de tu equipo para comenzar:</p>
+    <input type="text" id="playerName" placeholder="Nombre de Equipo..." maxlength="20" autocomplete="off">
+    <button class="btn" onclick="initQuiz()">Iniciar Test ➔</button>
 </div>
 
-<!-- 2. PREGUNTA NORMAL -->
-<div class="card" id="quizCard" style="display: none;">
-    <h2 id="questionTitle">Pregunta 1 de 1</h2>
-    <p id="questionText">¿Qué significa la sigla 'HTML' en tecnología?</p>
-    <div class="options-list">
-        <button class="option-btn" onclick="triggerGlitch()">A) HyperText Markup Language</button>
-        <option class="option-btn" onclick="triggerGlitch()" style="display:block;">B) High Technical Machine Language</option>
-        <button class="option-btn" onclick="triggerGlitch()">C) Home Tool Media Level</button>
+<!-- 2. PREGUNTA INICIAL CON RESPUESTAS CAÍDAS -->
+<div class="container" id="quizCard" style="display: none;">
+    <h2>Pregunta 1/1</h2>
+    <p style="margin-bottom: 20px; color: #94a3b8;">¿Cuál es la función principal de un Antivirus?</p>
+    <div class="answers-container" id="answersGroup">
+        <button class="answer-btn" id="ans1" onclick="startCollapse()">A) Detectar y eliminar software malicioso</button>
+        <button class="answer-btn" id="ans2" onclick="startCollapse()">B) Aumentar la velocidad de descarga</button>
+        <button class="answer-btn" id="ans3" onclick="startCollapse()">C) Limpiar la pantalla físicamente</button>
     </div>
 </div>
 
-<!-- 3. SPACE INVADERS MINIJUEGO -->
-<canvas id="gameCanvas" width="550" height="400"></canvas>
+<!-- 3. OVERLAY DE VIRUS DETECTADO -->
+<div id="warningOverlay">
+    <div class="warning-symbol">⚠️</div>
+    <h1 style="color: #fff; font-size: 2.5rem; text-shadow: 0 0 10px #000;">¡VIRUS DETECTADO!</h1>
+    <p style="color: #fca5a5; margin-top: 10px; font-size: 1.2rem;">SISTEMA COMPROMETIDO POR OMEGA-VIRUS.EXE</p>
+</div>
 
-<!-- 4. PANTALLA FINAL CON BOTÓN ESCAPISTA -->
-<div class="card" id="finalCard" style="display: none;">
-    <h2>🎉 ¡Felicidades <span id="finalPlayerName" style="color: #38bdf8;"></span>!</h2>
-    <p>Derrotaste al virus informático y bloqueaste los ataques de phishing/estafas.</p>
+<!-- 4. BOSS CANVAS (OMEGA FLOWEY STYLE) -->
+<canvas id="bossCanvas" width="600" height="450"></canvas>
+
+<!-- 5. PANTALLA EN ESPERA DE INSTRUCCIONES -->
+<div class="container" id="standbyCard" style="display: none;">
+    <h2 style="color: #00ff66;">✅ OMEGA-VIRUS ELIMINADO</h2>
+    <p>Se ha completado la purificación del sistema y el bloqueo de Adware.</p>
     <hr style="border-color: #334155; margin: 15px 0;">
-    <h3>¿Te gustó la prueba?</h3>
-    
-    <div class="feedback-box" id="feedbackArea">
-        <button class="btn" id="btnSi" onclick="confirmYes()">¡SÍ! ❤️</button>
-        <button class="btn" id="btnNo">No 👎</button>
-    </div>
+    <p style="color: #38bdf8; font-weight: bold;">Esperando siguientes instrucciones...</p>
 </div>
 
 <script>
-// --- SINTETIZADOR DE SONIDOS (Web Audio API) ---
+// --- AUDIO SYNTHESIS (Web Audio API) ---
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -255,271 +266,300 @@ function playSound(type) {
         gain.connect(audioCtx.destination);
         const now = audioCtx.currentTime;
 
-        if (type === 'shoot') {
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(400, now);
-            osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-            gain.gain.setValueAtTime(0.1, now);
-            osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'glitch') {
+        if (type === 'alarm') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(120, now);
-            osc.frequency.linearRampToValueAtTime(60, now + 0.4);
-            gain.gain.setValueAtTime(0.3, now);
-            osc.start(now); osc.stop(now + 0.4);
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.linearRampToValueAtTime(300, now + 0.3);
+            gain.gain.setValueAtTime(0.25, now);
+            osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'shoot') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(150, now + 0.08);
+            gain.gain.setValueAtTime(0.1, now);
+            osc.start(now); osc.stop(now + 0.08);
+        } else if (type === 'hit') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.linearRampToValueAtTime(40, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now);
+            osc.start(now); osc.stop(now + 0.1);
         } else if (type === 'pop') {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, now);
-            osc.frequency.setValueAtTime(1200, now + 0.05);
-            gain.gain.setValueAtTime(0.15, now);
-            osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'dodge') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(300, now);
-            osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
-            gain.gain.setValueAtTime(0.1, now);
+            osc.frequency.setValueAtTime(900, now);
+            osc.frequency.setValueAtTime(1300, now + 0.04);
+            gain.gain.setValueAtTime(0.12, now);
             osc.start(now); osc.stop(now + 0.08);
         }
     } catch(e){}
 }
 
-// --- VARIABLES DE ESTADO ---
-let playerName = "";
-const canvas = document.getElementById("gameCanvas");
+let teamName = "";
+const canvas = document.getElementById("bossCanvas");
 const ctx = canvas.getContext("2d");
 
-function startQuiz() {
+function initQuiz() {
     const input = document.getElementById("playerName").value.trim();
-    playerName = input !== "" ? input : "Jugador";
+    teamName = input !== "" ? input : "Equipo Alfa";
     document.getElementById("welcomeCard").style.display = "none";
     document.getElementById("quizCard").style.display = "block";
 }
 
-// --- PASO 2 Y 3: CAÍDA DE LA PÁGINA Y SPACE INVADERS ---
-function triggerGlitch() {
-    playSound('glitch');
-    const quizCard = document.getElementById("quizCard");
-    quizCard.classList.add("glitch-active");
+// --- PASO 1: CAÍDA DE RESPUESTAS Y ALERTA VIRUS ---
+function startCollapse() {
+    document.getElementById("ans1").classList.add("fall-1");
+    document.getElementById("ans2").classList.add("fall-2");
+    document.getElementById("ans3").classList.add("fall-3");
+
+    playSound('alarm');
 
     setTimeout(() => {
-        quizCard.style.display = "none";
-        quizCard.classList.remove("glitch-active");
-        canvas.style.display = "block";
-        initSpaceInvaders();
-    }, 800);
+        document.getElementById("quizCard").style.display = "none";
+        const warning = document.getElementById("warningOverlay");
+        warning.style.display = "flex";
+
+        let alarmInterval = setInterval(() => playSound('alarm'), 350);
+
+        setTimeout(() => {
+            clearInterval(alarmInterval);
+            warning.style.display = "none";
+            canvas.style.display = "block";
+            startBossFight();
+        }, 2200);
+    }, 1000);
 }
 
-// LÓGICA DE SPACE INVADERS
-let player = { x: 250, y: 360, w: 40, h: 15 };
-let lasers = [];
-let viruses = [];
-let invaderDirection = 1;
-let invaderSpeed = 1.2;
-let gameInterval = null;
+// --- PASO 2: PELEA DE JEFE OMEGA FLOWEY (CIBERNÉTICO) ---
+let player = { x: 290, y: 390, size: 14, speed: 5 };
+let boss = { x: 300, y: 130, hp: 600, maxHp: 600, eyeAngle: 0, expression: 0 };
+let playerBullets = [];
+let bossBullets = [];
+let bossLasers = [];
+let keys = {};
+let gameLoopId = null;
+let frameCount = 0;
 
-function initSpaceInvaders() {
-    viruses = [];
-    lasers = [];
-    // Crear rejilla de virus (Space Invaders)
-    for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 6; c++) {
-            viruses.push({
-                x: 60 + c * 70,
-                y: 50 + r * 40,
-                w: 30,
-                h: 25,
-                alive: true
+function startBossFight() {
+    window.addEventListener("keydown", e => keys[e.code] = true);
+    window.addEventListener("keyup", e => keys[e.code] = false);
+
+    // Controles táctiles/Mouse
+    canvas.addEventListener("mousemove", e => {
+        const rect = canvas.getBoundingClientRect();
+        player.x = e.clientX - rect.left;
+        player.y = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener("mousedown", firePlayerBullet);
+    canvas.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        player.x = e.touches[0].clientX - rect.left;
+        player.y = e.touches[0].clientY - rect.top;
+        firePlayerBullet();
+    });
+
+    gameLoopId = requestAnimationFrame(updateBossFight);
+}
+
+function firePlayerBullet() {
+    playerBullets.push({ x: player.x, y: player.y - 10 });
+    playSound('shoot');
+}
+
+function updateBossFight() {
+    frameCount++;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Movimiento Teclado Jugador
+    if (keys["ArrowLeft"] || keys["KeyA"]) player.x -= player.speed;
+    if (keys["ArrowRight"] || keys["KeyD"]) player.x += player.speed;
+    if (keys["ArrowUp"] || keys["KeyW"]) player.y -= player.speed;
+    if (keys["ArrowDown"] || keys["KeyS"]) player.y += player.speed;
+    if (keys["Space"] && frameCount % 6 === 0) firePlayerBullet();
+
+    player.x = Math.max(15, Math.min(canvas.width - 15, player.x));
+    player.y = Math.max(220, Math.min(canvas.height - 15, player.y));
+
+    // Dibujar Jugador (Corazón Soul Undertale)
+    drawHeart(player.x, player.y, player.size, "#00ff66");
+
+    // DIBUJAR JEFE OMEGA FLOWEY CIBERNÉTICO
+    drawOmegaBoss();
+
+    // Actualizar Bales Jugador
+    ctx.fillStyle = "#00ff66";
+    playerBullets.forEach((b, i) => {
+        b.y -= 8;
+        ctx.fillRect(b.x - 2, b.y, 4, 10);
+
+        // Impacto en el Jefe
+        if (Math.hypot(b.x - boss.x, b.y - boss.y) < 70) {
+            boss.hp -= 12;
+            playSound('hit');
+            playerBullets.splice(i, 1);
+        }
+    });
+
+    // ATAQUES DEL JEFE
+    // 1. Anillo de Proyectiles Glitch
+    if (frameCount % 45 === 0) {
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+            bossBullets.push({
+                x: boss.x, y: boss.y + 20,
+                vx: Math.cos(a) * 3,
+                vy: Math.sin(a) * 3
             });
         }
     }
 
-    // Eventos de control teclado y táctil
-    window.addEventListener("keydown", handleKey);
-    canvas.addEventListener("mousemove", handleMouse);
-    canvas.addEventListener("click", fireLaser);
-    canvas.addEventListener("touchstart", handleTouchFire);
-
-    gameInterval = requestAnimationFrame(updateInvaders);
-}
-
-function handleKey(e) {
-    if (e.code === "ArrowLeft" || e.code === "KeyA") player.x -= 20;
-    if (e.code === "ArrowRight" || e.code === "KeyD") player.x += 20;
-    if (e.code === "Space") fireLaser();
-    player.x = Math.max(10, Math.min(canvas.width - player.w - 10, player.x));
-}
-
-function handleMouse(e) {
-    const rect = canvas.getBoundingClientRect();
-    player.x = e.clientX - rect.left - player.w / 2;
-    player.x = Math.max(10, Math.min(canvas.width - player.w - 10, player.x));
-}
-
-function handleTouchFire(e) {
-    e.preventDefault();
-    fireLaser();
-}
-
-function fireLaser() {
-    lasers.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 12 });
-    playSound('shoot');
-}
-
-function updateInvaders() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Texto instructivo arriba
-    ctx.fillStyle = "#00ff66";
-    ctx.font = "bold 14px Arial";
-    ctx.fillText("⚠️ ¡VIRUS DETECTADO! ¡ELIMÍNALOS A TODOS!", 110, 25);
-
-    // Dibujar Jugador
-    ctx.fillStyle = "#38bdf8";
-    ctx.fillRect(player.x, player.y, player.w, player.h);
-    ctx.fillRect(player.x + 15, player.y - 8, 10, 8);
-
-    // Actualizar y Dibujar Láseres
+    // Dibujar Proyectiles del Jefe
     ctx.fillStyle = "#ff0055";
-    lasers.forEach((l, index) => {
-        l.y -= 7;
-        ctx.fillRect(l.x, l.y, l.w, l.h);
+    bossBullets.forEach((bb, i) => {
+        bb.x += bb.vx;
+        bb.y += bb.vy;
+        ctx.beginPath();
+        ctx.arc(bb.x, bb.y, 6, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Colisión con Virus
-        viruses.forEach(v => {
-            if (v.alive && l.x > v.x && l.x < v.x + v.w && l.y > v.y && l.y < v.y + v.h) {
-                v.alive = false;
-                lasers.splice(index, 1);
-            }
-        });
-
-        if (l.y < 0) lasers.splice(index, 1);
+        if (bb.y > canvas.height || bb.x < 0 || bb.x > canvas.width) {
+            bossBullets.splice(i, 1);
+        }
     });
 
-    // Mover y Dibujar Virus
-    let changeDir = false;
-    let aliveCount = 0;
+    // BARRA DE VIDA DEL JEFE
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(50, 15, 500, 18);
+    ctx.fillStyle = "#ff0055";
+    ctx.fillRect(50, 15, Math.max(0, (boss.hp / boss.maxHp) * 500), 18);
+    ctx.strokeStyle = "#ffffff";
+    ctx.strokeRect(50, 15, 500, 18);
 
-    viruses.forEach(v => {
-        if (!v.alive) return;
-        aliveCount++;
-        v.x += invaderSpeed * invaderDirection;
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 12px Courier New";
+    ctx.fillText("JEFE: OMEGA-VIRUS.EXE", 55, 29);
 
-        if (v.x > canvas.width - 40 || v.x < 10) changeDir = true;
-
-        // Dibujo de Virus Retro
-        ctx.fillStyle = "#ef4444";
-        ctx.fillRect(v.x, v.y, v.w, v.h);
-        ctx.fillStyle = "#000";
-        ctx.fillRect(v.x + 5, v.y + 5, 5, 5);
-        ctx.fillRect(v.x + 20, v.y + 5, 5, 5);
-    });
-
-    if (changeDir) {
-        invaderDirection *= -1;
-        viruses.forEach(v => v.y += 10);
-    }
-
-    // Condición de Victoria
-    if (aliveCount === 0) {
+    // VICTORIA SOBRE EL JEFE
+    if (boss.hp <= 0) {
         canvas.style.display = "none";
-        triggerPopups(); // Pasar a la fase de Pop-ups de estafas
+        triggerMassiveScamPopups();
         return;
     }
 
-    requestAnimationFrame(updateInvaders);
+    requestAnimationFrame(updateBossFight);
 }
 
-// --- PASO 4: PANTALLAS EMERGENTES (ANTI-ESTAFAS) ---
-const scamMessages = [
-    "⚠️ ¡GANASTE UN IPHONE 17 PRO! Haz clic aquí para reclamar.",
-    "🚨 Su cuenta de banco ha sido SUSPENDIDA. Ingrese su clave.",
-    "💰 ¡Transferencia pendiente de $5,000 USD! Verifique CBU.",
-    "👾 99 Virus detectados en su dispositivo. Descargue AntivirusPro.exe"
+function drawOmegaBoss() {
+    // Tentáculos metálicos laterales
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(boss.x - 60, boss.y);
+    ctx.quadraticCurveTo(boss.x - 140, boss.y + Math.sin(frameCount*0.1)*30, boss.x - 180, boss.y + 100);
+    ctx.moveTo(boss.x + 60, boss.y);
+    ctx.quadraticCurveTo(boss.x + 140, boss.y + Math.sin(frameCount*0.1)*30, boss.x + 180, boss.y + 100);
+    ctx.stroke();
+
+    // Cabeza Monitor CRT Grotesco
+    ctx.fillStyle = "#111827";
+    ctx.fillRect(boss.x - 80, boss.y - 60, 160, 120);
+    ctx.strokeStyle = "#ff0055";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(boss.x - 80, boss.y - 60, 160, 120);
+
+    // Ojos Glitch
+    ctx.fillStyle = "#ff0055";
+    ctx.beginPath();
+    ctx.arc(boss.x - 30, boss.y - 15, 18 + Math.sin(frameCount*0.2)*3, 0, Math.PI * 2);
+    ctx.arc(boss.x + 30, boss.y - 15, 18 + Math.cos(frameCount*0.2)*3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(boss.x - 34, boss.y - 18, 8, 8);
+    ctx.fillRect(boss.x + 26, boss.y - 18, 8, 8);
+
+    // Boca Dientes Digitales
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(boss.x - 40, boss.y + 20, 80, 20);
+    ctx.fillStyle = "#000";
+    for(let i = -35; i < 35; i += 12) {
+        ctx.fillRect(boss.x + i, boss.y + 20, 4, 20);
+    }
+}
+
+function drawHeart(x, y, size, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x - size/2, y - size/2, size/2, Math.PI, 0, false);
+    ctx.arc(x + size/2, y - size/2, size/2, Math.PI, 0, false);
+    ctx.lineTo(x, y + size);
+    ctx.closePath();
+    ctx.fill();
+}
+
+// --- PASO 3: POP-UPS MASIVOS Y TEMPORIZADOR DE 20 SEGUNDOS ---
+const scamTexts = [
+    "⚠️ ¡GANASTE UN IPHONE 17 PRO! Clic aquí",
+    "🚨 Su cuenta de banco ha sido BLOQUEADA.",
+    "💰 Transfiera $1,000 USD para liberar archivos.",
+    "👾 999 VIRUS DETECTADOS. Descargue CleanPC.exe",
+    "🛑 ¡ALERTA DE SEGURIDAD CRÍTICA!",
+    "🎁 ¡Felicidades Usuario! Ganaste un premio."
 ];
 
-function triggerPopups() {
-    let popupCount = 0;
-    const maxPopups = 6;
+function triggerMassiveScamPopups() {
+    const timerBanner = document.getElementById("timerBanner");
+    const timerSeconds = document.getElementById("timerSeconds");
+    timerBanner.style.display = "block";
 
-    const interval = setInterval(() => {
+    let timeLeft = 20;
+
+    // Generar Pop-ups masivos continuos
+    const popupInterval = setInterval(() => {
+        createScamPopup(scamTexts[Math.floor(Math.random() * scamTexts.length)]);
         playSound('pop');
-        createPopup(scamMessages[popupCount % scamMessages.length]);
-        popupCount++;
+    }, 250);
 
-        if (popupCount >= maxPopups) {
-            clearInterval(interval);
-            // Esperar unos segundos y limpiar la pantalla automáticamente
-            setTimeout(() => {
-                document.querySelectorAll('.popup-window').forEach(p => p.remove());
-                showFinalScreen();
-            }, 3500);
+    // Reloj de cuenta regresiva de 20 segundos
+    const countdown = setInterval(() => {
+        timeLeft--;
+        timerSeconds.innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(popupInterval);
+            clearInterval(countdown);
+            timerBanner.style.display = "none";
+
+            // Eliminar todos los pop-ups de la pantalla
+            document.querySelectorAll(".scam-popup").forEach(el => el.remove());
+
+            // Mostrar pantalla final de espera de instrucciones
+            document.getElementById("standbyCard").style.display = "block";
         }
-    }, 400);
+    }, 1000);
 }
 
-function createPopup(text) {
+function createScamPopup(text) {
     const pop = document.createElement("div");
-    pop.className = "popup-window";
-    
-    // Posición aleatoria en pantalla
-    const randomX = Math.floor(Math.random() * (window.innerWidth - 280));
-    const randomY = Math.floor(Math.random() * (window.innerHeight - 150));
-    pop.style.left = `${Math.max(10, randomX)}px`;
-    pop.style.top = `${Math.max(10, randomY)}px`;
+    pop.className = "scam-popup";
+
+    const rx = Math.floor(Math.random() * (window.innerWidth - 300));
+    const ry = Math.floor(Math.random() * (window.innerHeight - 180));
+    pop.style.left = `${Math.max(10, rx)}px`;
+    pop.style.top = `${Math.max(10, ry)}px`;
 
     pop.innerHTML = `
-        <div class="popup-header">
-            <span>⚠️ ALERTA DE SEGURIDAD</span>
+        <div class="scam-header">
+            <span>⚠️ ADVERTENCIA</span>
             <span style="cursor:pointer;" onclick="this.parentElement.parentElement.remove()">✕</span>
         </div>
-        <div class="popup-body">
-            <p style="color:#0f172a; margin-bottom:5px;">${text}</p>
-            <button class="popup-btn" onclick="this.parentElement.parentElement.remove()">CERRAR / BLOQUEAR</button>
+        <div class="scam-body">
+            <p>${text}</p>
+            <button class="scam-btn" onclick="this.parentElement.parentElement.remove()">CERRAR</button>
         </div>
     `;
 
     document.body.appendChild(pop);
-}
-
-// --- PASO 5: PANTALLA FINAL Y BOTÓN "NO" ESCAPISTA ---
-function showFinalScreen() {
-    document.getElementById("finalPlayerName").innerText = playerName;
-    document.getElementById("finalCard").style.display = "block";
-    setupEvasiveButton();
-}
-
-function setupEvasiveButton() {
-    const btnNo = document.getElementById("btnNo");
-    const container = document.getElementById("feedbackArea");
-
-    // Posición inicial del botón No
-    btnNo.style.left = "180px";
-    btnNo.style.top = "10px";
-
-    function moveNoButton() {
-        playSound('dodge');
-        const containerRect = container.getBoundingClientRect();
-        const btnRect = btnNo.getBoundingClientRect();
-
-        const maxX = containerRect.width - btnRect.width - 20;
-        const maxY = containerRect.height - btnRect.height - 20;
-
-        const newX = Math.max(10, Math.floor(Math.random() * maxX));
-        const newY = Math.max(10, Math.floor(Math.random() * maxY));
-
-        btnNo.style.left = `${newX}px`;
-        btnNo.style.top = `${newY}px`;
-    }
-
-    btnNo.addEventListener("mouseover", moveNoButton);
-    btnNo.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        moveNoButton();
-    });
-}
-
-function confirmYes() {
-    alert(`¡Gracias por tu respuesta, ${playerName}! 🎉 ¡Has completado con éxito la prueba tecno-gamer!`);
 }
 </script>
 </body>
