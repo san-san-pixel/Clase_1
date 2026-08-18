@@ -3,321 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misión Tecnología - El Juego</title>
+    <title>Arcade Tecno-Game</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
 
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #050508;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .game-card {
-            background-color: #1e293b;
-            border: 2px solid #38bdf8;
-            border-radius: 16px;
-            padding: 25px;
-            max-width: 550px;
-            width: 100%;
-            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 10px;
-        }
-
-        .level-badge {
-            background-color: #0284c7;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .score-board {
-            color: #38bdf8;
-            font-weight: bold;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #334155;
-            border-radius: 4px;
-            margin-bottom: 20px;
             overflow: hidden;
         }
 
-        .progress-fill {
-            height: 100%;
-            background-color: #38bdf8;
-            width: 20%;
-            transition: width 0.3s ease;
-        }
-
-        .question-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .options-grid {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .option-btn {
-            background-color: #334155;
-            color: #f8fafc;
-            border: 2px solid transparent;
-            padding: 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
-
-        .option-btn:hover {
-            background-color: #475569;
-            border-color: #38bdf8;
-        }
-
-        .option-btn.correct {
-            background-color: #15803d !important;
-            border-color: #22c55e !important;
-        }
-
-        .option-btn.wrong {
-            background-color: #b91c1c !important;
-            border-color: #ef4444 !important;
-        }
-
-        .feedback {
-            min-height: 50px;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            padding: 10px;
+        .game-container {
+            position: relative;
+            border: 4px solid #38bdf8;
             border-radius: 8px;
-            display: none;
+            box-shadow: 0 0 20px #38bdf866;
+            background: #000;
         }
 
-        .feedback.show {
+        canvas {
             display: block;
+            background-color: #0d0e15;
         }
 
-        .feedback.correct-bg {
-            background-color: rgba(34, 197, 94, 0.1);
-            color: #4ade80;
-        }
-
-        .feedback.wrong-bg {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-        }
-
-        .action-btn {
-            width: 100%;
-            background-color: #0284c7;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: none;
-        }
-
-        .action-btn:hover {
-            background-color: #0369a1;
-        }
-
-        .result-screen {
+        .controls-hint {
+            margin-top: 12px;
+            color: #94a3b8;
+            font-size: 0.9rem;
             text-align: center;
-            padding: 20px 0;
-        }
-
-        .result-screen h2 {
-            font-size: 2rem;
-            color: #38bdf8;
-            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="game-card">
-    <div id="game-ui">
-        <div class="header">
-            <span class="level-badge" id="level-badge">Nivel 1/5</span>
-            <span class="score-board">Puntos: <span id="score">0</span></span>
-        </div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-        </div>
-        <div class="question-title" id="question-text">Cargando misión...</div>
-        <div class="options-grid" id="options-container"></div>
-        <div class="feedback" id="feedback"></div>
-        <button class="action-btn" id="next-btn" onclick="nextQuestion()">Siguiente Nivel ➔</button>
-    </div>
-
-    <div id="result-screen" class="result-screen" style="display: none;">
-        <h2>¡Misión Completada! 🎮</h2>
-        <p style="margin-bottom: 20px; font-size: 1.2rem;">Tu puntuación final es: <strong id="final-score" style="color: #38bdf8;">0</strong> / 500</p>
-        <button class="action-btn" style="display: block;" onclick="restartGame()">Jugar de Nuevo</button>
-    </div>
+<div class="game-container">
+    <canvas id="gameCanvas" width="600" height="450"></canvas>
+</div>
+<div class="controls-hint">
+    🎮 <b>Teclado:</b> Flechas / WASD para moverte | <b>Espacio:</b> Disparar <br>
+    📱 <b>Móvil/Mouse:</b> Toca o arrastra en pantalla para moverte / disparar
 </div>
 
 <script>
-    const questions = [
-        {
-            level: "Nivel 1: El Explorador Web",
-            question: "🎮 Misión: Quieres navegar por Internet para ver videos y leer noticias. ¿Qué herramienta debes ejecutar?",
-            options: [
-                { text: "Un navegador web", correct: true, info: "¡Correcto! Chrome, Firefox o Edge son navegadores web." },
-                { text: "Un procesador de texto", correct: false, info: "Incorrecto. Eso sirve para redactar documentos." },
-                { text: "Una hoja de cálculo", correct: false, info: "Incorrecto. Eso se usa para cuentas y tablas." },
-                { text: "Un antivirus", correct: false, info: "Incorrecto. Eso sirve para desinfectar el sistema." }
-            ]
-        },
-        {
-            level: "Nivel 2: Desafío de Almacenamiento",
-            question: "☁️ Misión: Te quedaste sin espacio local. ¿Dónde guardas tus archivos para acceder desde cualquier parte?",
-            options: [
-                { text: "Memoria de la pantalla", correct: false, info: "Incorrecto. El monitor solo muestra imagen." },
-                { text: "Almacenamiento en la nube", correct: true, info: "¡Excelente! La nube guarda tus datos en servidores remotos." },
-                { text: "Cable de red", correct: false, info: "Incorrecto. Los cables transmiten datos, no los guardan." },
-                { text: "Papelera de reciclaje", correct: false, info: "Incorrecto. Ahí se envían los archivos a borrar." }
-            ]
-        },
-        {
-            level: "Nivel 3: Escudo Anti-Hackers",
-            question: "🛡️ Misión: Un hacker intenta entrar a tu cuenta. ¿Cuál es la contraseña más segura?",
-            options: [
-                { text: "123456", correct: false, info: "Incorrecto. Es la clave más fácil de adivinar." },
-                { text: "password", correct: false, info: "Incorrecto. Usar palabras comunes es muy riesgoso." },
-                { text: "Xk9#mP$2!vQ", correct: true, info: "¡Poderoso escudo! Mezcla símbolos, números y mayúsculas." },
-                { text: "MiNombre2026", correct: false, info: "Incorrecto. Datos personales son fáciles de deducir." }
-            ]
-        },
-        {
-            level: "Nivel 4: Detective de Componentes",
-            question: "🖥️ Misión: Puedes tocar físicamente el teclado, el ratón y la pantalla. ¿Cómo se llama esta parte?",
-            options: [
-                { text: "Software", correct: false, info: "Incorrecto. El software son los programas intangibles." },
-                { text: "Hardware", correct: true, info: "¡Correcto! El hardware representa la parte física." },
-                { text: "Malware", correct: false, info: "Incorrecto. Eso es código malicioso o virus." },
-                { text: "Freeware", correct: false, info: "Incorrecto. Se refiere a programas gratuitos." }
-            ]
-        },
-        {
-            level: "Nivel 5: La Señal Invisible",
-            question: "📶 Misión: Llegas a una cafetería y necesitas conectar tu celular a Internet sin cables. ¿Qué usas?",
-            options: [
-                { text: "Red Wi-Fi", correct: true, info: "¡Victoria! El Wi-Fi transmite datos de forma inalámbrica." },
-                { text: "Bluetooth", correct: false, info: "Incorrecto. Sirve para conectar accesorios cercanos." },
-                { text: "Cable Ethernet", correct: false, info: "Incorrecto. Eso requiere una conexión física." },
-                { text: "Puerto USB", correct: false, info: "Incorrecto. Es un conector físico de cables." }
-            ]
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let currentLevel = 0;
+let score = 0;
+let hp = 100;
+let gameOver = false;
+let gameWin = false;
+
+const keys = {};
+let touchX = null;
+let touchY = null;
+let isTouching = false;
+
+window.addEventListener("keydown", e => keys[e.code] = true);
+window.addEventListener("keyup", e => keys[e.code] = false);
+
+canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    touchX = e.clientX - rect.left;
+    touchY = e.clientY - rect.top;
+});
+canvas.addEventListener("mousedown", () => isTouching = true);
+canvas.addEventListener("mouseup", () => isTouching = false);
+
+canvas.addEventListener("touchstart", e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    touchX = e.touches[0].clientX - rect.left;
+    touchY = e.touches[0].clientY - rect.top;
+    isTouching = true;
+});
+canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    touchX = e.touches[0].clientX - rect.left;
+    touchY = e.touches[0].clientY - rect.top;
+});
+canvas.addEventListener("touchend", () => isTouching = false);
+
+// -------------------------------------------------------------
+// NIVELES Y MECÁNICAS
+// -------------------------------------------------------------
+
+// Nivel 1: Undertale Dodge & Touch
+let p1 = { x: 300, y: 350, r: 12 };
+let bullets1 = [
+    { x: 100, y: 200, vx: 3, vy: 2 },
+    { x: 500, y: 220, vx: -2, vy: 3 },
+    { x: 200, y: 150, vx: 2, vy: -2 }
+];
+let targets1 = [
+    { text: "Navegador Web", correct: true, x: 80, y: 100, w: 180, h: 40 },
+    { text: "Procesador Texto", correct: false, x: 340, y: 100, w: 180, h: 40 },
+    { text: "Hoja de Cálculo", correct: false, x: 80, y: 260, w: 180, h: 40 },
+    { text: "Antivirus", correct: false, x: 340, y: 260, w: 180, h: 40 }
+];
+
+// Nivel 2: Space Shooter
+let p2 = { x: 300, y: 400, w: 30, h: 20 };
+let laserBullets = [];
+let lastShot = 0;
+let targets2 = [
+    { text: "RAM", correct: false, x: 50, y: 80, vx: 2 },
+    { text: "La Nube", correct: true, x: 180, y: 80, vx: 2 },
+    { text: "Cable", correct: false, x: 320, y: 80, vx: 2 },
+    { text: "Papelera", correct: false, x: 450, y: 80, vx: 2 }
+];
+
+// Nivel 3: Cyber Maze / Stealth
+let p3 = { x: 300, y: 410, r: 10 };
+let hackers = [
+    { x: 100, y: 200, vx: 4, r: 15 },
+    { x: 500, y: 280, vx: -5, r: 15 },
+    { x: 200, y: 140, vx: 3, r: 15 }
+];
+let doors = [
+    { text: "123456", correct: false, x: 80, y: 50, w: 100, h: 35 },
+    { text: "Xk9#mP$2!vQ", correct: true, x: 240, y: 50, w: 120, h: 35 },
+    { text: "password", correct: false, x: 420, y: 50, w: 100, h: 35 }
+];
+
+// Nivel 4: Catch the Hardware
+let p4 = { x: 300, y: 390, w: 60, h: 15 };
+let caughtHardware = 0;
+let fallingItems = [];
+let spawnTimer = 0;
+
+// Nivel 5: Wi-Fi Bullet Hell Final
+let p5 = { x: 300, y: 400, r: 10 };
+let wifiWaves = [];
+let wifiTimer = 0;
+
+function resetGame() {
+    currentLevel = 0;
+    score = 0;
+    hp = 100;
+    gameOver = false;
+    gameWin = false;
+    caughtHardware = 0;
+    p1.x = 300; p1.y = 350;
+    p2.x = 300;
+    p3.x = 300; p3.y = 410;
+    p4.x = 300;
+    p5.x = 300; p5.y = 400;
+}
+
+function nextLevel() {
+    score += 100;
+    currentLevel++;
+    if (currentLevel >= 5) {
+        gameWin = true;
+    }
+}
+
+// -------------------------------------------------------------
+// LOOP PRINCIPAL
+// -------------------------------------------------------------
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (gameOver) {
+        drawCenterText("¡GAME OVER!", "#ef4444", 40, -20);
+        drawCenterText("Presiona Espacio o Toca para reiniciar", "#fff", 18, 30);
+        if (keys["Space"] || (isTouching && touchY > 300)) resetGame();
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+
+    if (gameWin) {
+        drawCenterText("¡VICTORIA TOTAL!", "#22c55e", 40, -30);
+        drawCenterText("Puntuación Final: " + score, "#38bdf8", 24, 20);
+        drawCenterText("Presiona Espacio o Toca para jugar otra vez", "#fff", 16, 60);
+        if (keys["Space"] || (isTouching && touchY > 300)) resetGame();
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+
+    drawHUD();
+
+    if (currentLevel === 0) playLevel1();
+    else if (currentLevel === 1) playLevel2();
+    else if (currentLevel === 2) playLevel3();
+    else if (currentLevel === 3) playLevel4();
+    else if (currentLevel === 4) playLevel5();
+
+    requestAnimationFrame(gameLoop);
+}
+
+// -------------------------------------------------------------
+// LÓGICA DE NIVELES
+// -------------------------------------------------------------
+
+// NIVEL 1: UNDERTALE HEART DODGE
+function playLevel1() {
+    drawText("LVL 1: Toca la respuesta correcta. ¡Esquiva los ataques!", 15, 55, 14, "#fde047");
+
+    // Movimiento
+    movePlayer(p1, 4);
+
+    // Dibujar Corazón (Estilo Undertale)
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(p1.x, p1.y, p1.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Proyectiles Bouncing
+    ctx.fillStyle = "#f97316";
+    bullets1.forEach(b => {
+        b.x += b.vx;
+        b.y += b.vy;
+        if (b.x < 10 || b.x > canvas.width - 10) b.vx *= -1;
+        if (b.y < 80 || b.y > canvas.height - 10) b.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (dist(p1.x, p1.y, b.x, b.y) < p1.r + 8) {
+            takeDamage(1);
         }
-    ];
+    });
 
-    let currentQuestion = 0;
-    let score = 0;
-    let answered = false;
+    // Targets
+    targets1.forEach(t => {
+        ctx.strokeStyle = "#38bdf8";
+        ctx.strokeRect(t.x, t.y, t.w, t.h);
+        drawText(t.text, t.x + 10, t.y + 25, 14, "#fff");
 
-    function loadQuestion() {
-        answered = false;
-        const q = questions[currentQuestion];
-        
-        document.getElementById("level-badge").innerText = q.level;
-        document.getElementById("question-text").innerText = q.question;
-        document.getElementById("progress-fill").style.width = ((currentQuestion + 1) / questions.length) * 100 + "%";
-        
-        const feedback = document.getElementById("feedback");
-        feedback.className = "feedback";
-        feedback.innerText = "";
-        
-        document.getElementById("next-btn").style.display = "none";
+        if (p1.x > t.x && p1.x < t.x + t.w && p1.y > t.y && p1.y < t.y + t.h) {
+            if (t.correct) nextLevel();
+            else { takeDamage(20); p1.y += 40; }
+        }
+    });
+}
 
-        const optionsContainer = document.getElementById("options-container");
-        optionsContainer.innerHTML = "";
+// NIVEL 2: SPACE SHOOTER
+function playLevel2() {
+    drawText("LVL 2: ¡Dispara a la opción de guardado en red!", 15, 55, 14, "#fde047");
 
-        q.options.forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = opt.text;
-            btn.onclick = () => selectOption(btn, opt);
-            optionsContainer.appendChild(btn);
+    if (keys["ArrowLeft"] || keys["KeyA"]) p2.x -= 5;
+    if (keys["ArrowRight"] || keys["KeyD"]) p2.x += 5;
+    if (touchX !== null) p2.x += (touchX - p2.x) * 0.1;
+    p2.x = Math.max(20, Math.min(canvas.width - 20, p2.x));
+
+    // Nave
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillRect(p2.x - p2.w / 2, p2.y, p2.w, p2.h);
+
+    // Disparo
+    if ((keys["Space"] || isTouching) && Date.now() - lastShot > 250) {
+        laserBullets.push({ x: p2.x, y: p2.y });
+        lastShot = Date.now();
+    }
+
+    ctx.fillStyle = "#f43f5e";
+    laserBullets.forEach((b, index) => {
+        b.y -= 7;
+        ctx.fillRect(b.x - 2, b.y, 4, 10);
+
+        targets2.forEach(t => {
+            if (b.x > t.x && b.x < t.x + 90 && b.y > t.y && b.y < t.y + 30) {
+                laserBullets.splice(index, 1);
+                if (t.correct) nextLevel();
+                else takeDamage(15);
+            }
+        });
+    });
+
+    // Movimiento Objetivos
+    targets2.forEach(t => {
+        t.x += t.vx;
+        if (t.x < 10 || t.x > canvas.width - 100) t.vx *= -1;
+        ctx.fillStyle = "#1e293b";
+        ctx.fillRect(t.x, t.y, 90, 30);
+        ctx.strokeStyle = "#a855f7";
+        ctx.strokeRect(t.x, t.y, 90, 30);
+        drawText(t.text, t.x + 10, t.y + 20, 13, "#fff");
+    });
+}
+
+// NIVEL 3: CYBER MAZE STEALTH
+function playLevel3() {
+    drawText("LVL 3: Cruza sin tocar ciberataques hacia la clave segura", 15, 55, 13, "#fde047");
+
+    movePlayer(p3, 3);
+
+    ctx.fillStyle = "#a855f7";
+    ctx.beginPath();
+    ctx.arc(p3.x, p3.y, p3.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Hackers
+    ctx.fillStyle = "#ef4444";
+    hackers.forEach(h => {
+        h.x += h.vx;
+        if (h.x < 30 || h.x > canvas.width - 30) h.vx *= -1;
+        drawText("👾", h.x - 10, h.y + 5, 20, "#fff");
+
+        if (dist(p3.x, p3.y, h.x, h.y) < p3.r + h.r) {
+            takeDamage(2);
+            p3.y += 30;
+        }
+    });
+
+    // Puertas
+    doors.forEach(d => {
+        ctx.strokeStyle = "#22c55e";
+        ctx.strokeRect(d.x, d.y, d.w, d.h);
+        drawText(d.text, d.x + 5, d.y + 22, 12, "#fff");
+
+        if (p3.x > d.x && p3.x < d.x + d.w && p3.y > d.y && p3.y < d.y + d.h) {
+            if (d.correct) nextLevel();
+            else { takeDamage(25); p3.y = 410; }
+        }
+    });
+}
+
+// NIVEL 4: CATCH THE HARDWARE
+function playLevel4() {
+    drawText(`LVL 4: Atrapa 3 componentes de HARDWARE (${caughtHardware}/3)`, 15, 55, 14, "#fde047");
+
+    if (keys["ArrowLeft"] || keys["KeyA"]) p4.x -= 6;
+    if (keys["ArrowRight"] || keys["KeyD"]) p4.x += 6;
+    if (touchX !== null) p4.x += (touchX - p4.x) * 0.1;
+
+    ctx.fillStyle = "#e2e8f0";
+    ctx.fillRect(p4.x - p4.w / 2, p4.y, p4.w, p4.h);
+
+    spawnTimer++;
+    if (spawnTimer % 40 === 0) {
+        const isHw = Math.random() > 0.4;
+        const hwList = ["Teclado ⌨️", "Ratón 🖱️", "Monitor 🖥️"];
+        const swList = ["Virus 🦠", "Photoshop 🎨", "Windows 🪟"];
+        fallingItems.push({
+            x: Math.random() * (canvas.width - 80) + 40,
+            y: 80,
+            isHardware: isHw,
+            text: isHw ? hwList[Math.floor(Math.random() * hwList.length)] : swList[Math.floor(Math.random() * swList.length)]
         });
     }
 
-    function selectOption(selectedBtn, option) {
-        if (answered) return;
-        answered = true;
+    fallingItems.forEach((item, index) => {
+        item.y += 3.5;
+        drawText(item.text, item.x - 20, item.y, 13, item.isHardware ? "#4ade80" : "#f87171");
 
-        const feedback = document.getElementById("feedback");
-        const buttons = document.querySelectorAll(".option-btn");
+        // Colisión con la cesta
+        if (item.y >= p4.y && item.y <= p4.y + p4.h && Math.abs(item.x - p4.x) < p4.w) {
+            fallingItems.splice(index, 1);
+            if (item.isHardware) {
+                caughtHardware++;
+                if (caughtHardware >= 3) nextLevel();
+            } else {
+                takeDamage(15);
+            }
+        }
+    });
+}
 
-        buttons.forEach(btn => btn.style.cursor = "default");
+// NIVEL 5: UNDERTALE BULLET HELL FINAL
+function playLevel5() {
+    drawText("LVL 5: ¡Esquiva las ondas Wi-Fi y conéctate al Router!", 15, 55, 14, "#fde047");
 
-        if (option.correct) {
-            selectedBtn.classList.add("correct");
-            score += 100;
-            document.getElementById("score").innerText = score;
-            feedback.innerText = option.info;
-            feedback.classList.add("show", "correct-bg");
-        } else {
-            selectedBtn.classList.add("wrong");
-            feedback.innerText = option.info;
-            feedback.classList.add("show", "wrong-bg");
+    movePlayer(p5, 3.5);
+
+    // Corazón
+    ctx.fillStyle = "#38bdf8";
+    ctx.beginPath();
+    ctx.arc(p5.x, p5.y, p5.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Router Meta
+    drawText("📶 ROUTER", 250, 100, 20, "#22c55e");
+    if (dist(p5.x, p5.y, 300, 90) < 30) nextLevel();
+
+    // Generador de Ondas
+    wifiTimer++;
+    if (wifiTimer % 20 === 0) {
+        wifiWaves.push({ x: 300, y: 90, r: 10 });
+    }
+
+    wifiWaves.forEach((w, index) => {
+        w.r += 3;
+        ctx.strokeStyle = "#f43f5e";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Colisión
+        const d = dist(p5.x, p5.y, w.x, w.y);
+        if (Math.abs(d - w.r) < 8) {
+            takeDamage(2);
         }
 
-        document.getElementById("next-btn").style.display = "block";
+        if (w.r > 400) wifiWaves.splice(index, 1);
+    });
+}
+
+// -------------------------------------------------------------
+// UTILITIES
+// -------------------------------------------------------------
+function movePlayer(p, speed) {
+    if (keys["ArrowLeft"] || keys["KeyA"]) p.x -= speed;
+    if (keys["ArrowRight"] || keys["KeyD"]) p.x += speed;
+    if (keys["ArrowUp"] || keys["KeyW"]) p.y -= speed;
+    if (keys["ArrowDown"] || keys["KeyS"]) p.y += speed;
+
+    if (touchX !== null && touchY !== null && isTouching) {
+        p.x += (touchX - p.x) * 0.1;
+        p.y += (touchY - p.y) * 0.1;
     }
 
-    function nextQuestion() {
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-            loadQuestion();
-        } else {
-            showResults();
-        }
-    }
+    p.x = Math.max(20, Math.min(canvas.width - 20, p.x));
+    p.y = Math.max(80, Math.min(canvas.height - 20, p.y));
+}
 
-    function showResults() {
-        document.getElementById("game-ui").style.display = "none";
-        document.getElementById("result-screen").style.display = "block";
-        document.getElementById("final-score").innerText = score;
+function takeDamage(amount) {
+    hp -= amount;
+    if (hp <= 0) {
+        hp = 0;
+        gameOver = true;
     }
+}
 
-    function restartGame() {
-        currentQuestion = 0;
-        score = 0;
-        document.getElementById("score").innerText = score;
-        document.getElementById("result-screen").style.display = "none";
-        document.getElementById("game-ui").style.display = "block";
-        loadQuestion();
-    }
+function dist(x1, y1, x2, y2) {
+    return Math.hypot(x2 - x1, y2 - y1);
+}
 
-    loadQuestion();
+function drawHUD() {
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(0, 0, canvas.width, 40);
+
+    drawText("HP: " + hp, 15, 26, 16, hp > 30 ? "#22c55e" : "#ef4444");
+    drawText("SCORE: " + score, 470, 26, 16, "#38bdf8");
+}
+
+function drawText(text, x, y, size, color) {
+    ctx.fillStyle = color;
+    ctx.font = `bold ${size}px 'Courier New', monospace`;
+    ctx.fillText(text, x, y);
+}
+
+function drawCenterText(text, color, size, offsetY = 0) {
+    ctx.fillStyle = color;
+    ctx.font = `bold ${size}px 'Courier New', monospace`;
+    ctx.textAlign = "center";
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + offsetY);
+    ctx.textAlign = "start";
+}
+
+requestAnimationFrame(gameLoop);
 </script>
 </body>
 </html>
