@@ -3,76 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Tecno-Game Deluxe</title>
+    <title>Desafío Cyber-Tech</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
-            -webkit-user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #030712;
+            background-color: #0b0f19;
             color: #f8fafc;
-            font-family: 'Courier New', Courier, monospace;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
             overflow: hidden;
-        }
-
-        .game-wrapper {
             position: relative;
-            border: 3px solid #00f0ff;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
-            background: #000;
         }
 
-        canvas {
-            display: block;
+        /* CARD DE INTERFAZ GENERAL */
+        .card {
+            background: #1e293b;
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.2);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        h1, h2 {
+            color: #38bdf8;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
             border-radius: 8px;
-            background-color: #05050d;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            outline: none;
+            text-align: center;
         }
 
-        .controls-info {
-            margin-top: 10px;
-            color: #94a3b8;
+        input[type="text"]:focus {
+            border-color: #38bdf8;
+        }
+
+        .btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn:hover {
+            background: #0369a1;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        /* OPCIONES DE PREGUNTAS NORMALES */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #334155;
+            color: #fff;
+            border: 2px solid transparent;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #475569;
+            border-color: #38bdf8;
+        }
+
+        /* EFECTO COLAPSO / GLITCH */
+        .glitch-active {
+            animation: shakeGlitch 0.5s infinite;
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        @keyframes shakeGlitch {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-10px, 10px) rotate(-2deg); }
+            40% { transform: translate(10px, -5px) rotate(2deg); }
+            60% { transform: translate(-15px, -10px) rotate(-1deg); }
+            80% { transform: translate(15px, 10px) rotate(3deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* CANVAS DE SPACE INVADERS */
+        #gameCanvas {
+            display: none;
+            border: 3px solid #00ff66;
+            border-radius: 10px;
+            background-color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            max-width: 100%;
+        }
+
+        /* VENTANAS POP-UP DE ESTAFAS */
+        .popup-window {
+            position: absolute;
+            width: 260px;
+            background: #e2e8f0;
+            color: #0f172a;
+            border: 3px solid #ef4444;
+            border-radius: 6px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            z-index: 100;
+            animation: popupBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: Arial, sans-serif;
+        }
+
+        .popup-header {
+            background: #ef4444;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popup-body {
+            padding: 12px;
             font-size: 0.85rem;
             text-align: center;
-            line-height: 1.4;
+        }
+
+        .popup-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        @keyframes popupBounce {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* CONTENEDOR DE ENCUESTA FINAL */
+        .feedback-box {
+            position: relative;
+            min-height: 180px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #btnNo {
+            position: absolute;
+            background: #ef4444;
+            transition: left 0.15s ease, top 0.15s ease;
+        }
+
+        #btnSi {
+            background: #22c55e;
+            margin-right: 15px;
         }
     </style>
 </head>
 <body>
 
-<div class="game-wrapper">
-    <canvas id="gameCanvas" width="640" height="480"></canvas>
+<!-- 1. REGISTRO INICIAL -->
+<div class="card" id="welcomeCard">
+    <h1>👾 Misión Tecnología</h1>
+    <p>Ingresa tu nombre o el de tu equipo para comenzar el test:</p>
+    <input type="text" id="playerName" placeholder="Nombre / Equipo" maxlength="20" autocomplete="off">
+    <button class="btn" onclick="startQuiz()">Comenzar Test ➔</button>
 </div>
-<div class="controls-info">
-    🕹️ <b>Teclado:</b> Flechas / WASD para moverte | <b>Espacio:</b> Disparar<br>
-    📱 <b>Táctil:</b> Desliza en cualquier parte para moverte (con offset para no tapar tu personaje)
+
+<!-- 2. PREGUNTA NORMAL -->
+<div class="card" id="quizCard" style="display: none;">
+    <h2 id="questionTitle">Pregunta 1 de 1</h2>
+    <p id="questionText">¿Qué significa la sigla 'HTML' en tecnología?</p>
+    <div class="options-list">
+        <button class="option-btn" onclick="triggerGlitch()">A) HyperText Markup Language</button>
+        <option class="option-btn" onclick="triggerGlitch()" style="display:block;">B) High Technical Machine Language</option>
+        <button class="option-btn" onclick="triggerGlitch()">C) Home Tool Media Level</button>
+    </div>
+</div>
+
+<!-- 3. SPACE INVADERS MINIJUEGO -->
+<canvas id="gameCanvas" width="550" height="400"></canvas>
+
+<!-- 4. PANTALLA FINAL CON BOTÓN ESCAPISTA -->
+<div class="card" id="finalCard" style="display: none;">
+    <h2>🎉 ¡Felicidades <span id="finalPlayerName" style="color: #38bdf8;"></span>!</h2>
+    <p>Derrotaste al virus informático y bloqueaste los ataques de phishing/estafas.</p>
+    <hr style="border-color: #334155; margin: 15px 0;">
+    <h3>¿Te gustó la prueba?</h3>
+    
+    <div class="feedback-box" id="feedbackArea">
+        <button class="btn" id="btnSi" onclick="confirmYes()">¡SÍ! ❤️</button>
+        <button class="btn" id="btnNo">No 👎</button>
+    </div>
 </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-// --- SINTETIZADOR DE AUDIO REAL-TIME (Web Audio API) ---
+// --- SINTETIZADOR DE SONIDOS (Web Audio API) ---
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
-function initAudio() {
+function playSound(type) {
     if (!audioCtx) audioCtx = new AudioContext();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-}
-
-function playSfx(type) {
-    if (!audioCtx) return;
     try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -81,593 +256,271 @@ function playSfx(type) {
         const now = audioCtx.currentTime;
 
         if (type === 'shoot') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(600, now);
-            osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-            osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'hit') {
             osc.type = 'square';
-            osc.frequency.setValueAtTime(300, now);
-            osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-            osc.start(now); osc.stop(now + 0.15);
-        } else if (type === 'damage') {
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+            gain.gain.setValueAtTime(0.1, now);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'glitch') {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(120, now);
-            osc.frequency.linearRampToValueAtTime(40, now + 0.2);
+            osc.frequency.linearRampToValueAtTime(60, now + 0.4);
             gain.gain.setValueAtTime(0.3, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-            osc.start(now); osc.stop(now + 0.2);
-        } else if (type === 'win') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.setValueAtTime(554, now + 0.1);
-            osc.frequency.setValueAtTime(659, now + 0.2);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
             osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'pop') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.setValueAtTime(1200, now + 0.05);
+            gain.gain.setValueAtTime(0.15, now);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'dodge') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+            gain.gain.setValueAtTime(0.1, now);
+            osc.start(now); osc.stop(now + 0.08);
         }
     } catch(e){}
 }
 
-// --- ESTADO GENERAL Y JUICINESS ---
-let currentLevel = 0;
-let score = 0;
-let hp = 100;
-let gameOver = false;
-let gameWin = false;
+// --- VARIABLES DE ESTADO ---
+let playerName = "";
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-let screenShake = 0;
-let particles = [];
-let floaters = [];
-let stars = Array.from({length: 40}, () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    speed: Math.random() * 2 + 0.5,
-    size: Math.random() * 2 + 1
-}));
+function startQuiz() {
+    const input = document.getElementById("playerName").value.trim();
+    playerName = input !== "" ? input : "Jugador";
+    document.getElementById("welcomeCard").style.display = "none";
+    document.getElementById("quizCard").style.display = "block";
+}
 
-// --- CONTROLES MÓVILES Y TECLADO ---
-const keys = {};
-let touchStartPos = null;
-let playerTouchStart = null;
+// --- PASO 2 Y 3: CAÍDA DE LA PÁGINA Y SPACE INVADERS ---
+function triggerGlitch() {
+    playSound('glitch');
+    const quizCard = document.getElementById("quizCard");
+    quizCard.classList.add("glitch-active");
 
-window.addEventListener("keydown", e => {
-    initAudio();
-    keys[e.code] = true;
-});
-window.addEventListener("keyup", e => keys[e.code] = false);
+    setTimeout(() => {
+        quizCard.style.display = "none";
+        quizCard.classList.remove("glitch-active");
+        canvas.style.display = "block";
+        initSpaceInvaders();
+    }, 800);
+}
 
-canvas.addEventListener("touchstart", e => {
-    initAudio();
-    e.preventDefault();
+// LÓGICA DE SPACE INVADERS
+let player = { x: 250, y: 360, w: 40, h: 15 };
+let lasers = [];
+let viruses = [];
+let invaderDirection = 1;
+let invaderSpeed = 1.2;
+let gameInterval = null;
+
+function initSpaceInvaders() {
+    viruses = [];
+    lasers = [];
+    // Crear rejilla de virus (Space Invaders)
+    for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 6; c++) {
+            viruses.push({
+                x: 60 + c * 70,
+                y: 50 + r * 40,
+                w: 30,
+                h: 25,
+                alive: true
+            });
+        }
+    }
+
+    // Eventos de control teclado y táctil
+    window.addEventListener("keydown", handleKey);
+    canvas.addEventListener("mousemove", handleMouse);
+    canvas.addEventListener("click", fireLaser);
+    canvas.addEventListener("touchstart", handleTouchFire);
+
+    gameInterval = requestAnimationFrame(updateInvaders);
+}
+
+function handleKey(e) {
+    if (e.code === "ArrowLeft" || e.code === "KeyA") player.x -= 20;
+    if (e.code === "ArrowRight" || e.code === "KeyD") player.x += 20;
+    if (e.code === "Space") fireLaser();
+    player.x = Math.max(10, Math.min(canvas.width - player.w - 10, player.x));
+}
+
+function handleMouse(e) {
     const rect = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    touchStartPos = { x: t.clientX - rect.left, y: t.clientY - rect.top };
-    playerTouchStart = { x: getCurrentPlayer().x, y: getCurrentPlayer().y };
-});
+    player.x = e.clientX - rect.left - player.w / 2;
+    player.x = Math.max(10, Math.min(canvas.width - player.w - 10, player.x));
+}
 
-canvas.addEventListener("touchmove", e => {
+function handleTouchFire(e) {
     e.preventDefault();
-    if (!touchStartPos || !playerTouchStart) return;
-    const rect = canvas.getBoundingClientRect();
-    const t = e.touches[0];
-    const currentTouch = { x: t.clientX - rect.left, y: t.clientY - rect.top };
-    const dx = currentTouch.x - touchStartPos.x;
-    const dy = currentTouch.y - touchStartPos.y;
-    
-    let p = getCurrentPlayer();
-    if (p) {
-        p.x = playerTouchStart.x + dx;
-        p.y = playerTouchStart.y + dy;
-    }
-});
-
-canvas.addEventListener("touchend", () => {
-    touchStartPos = null;
-    playerTouchStart = null;
-});
-
-// --- PARTICULAS Y TEXTO FLOTANTE ---
-function addExplosion(x, y, color, count = 15) {
-    for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 4 + 1;
-        particles.push({
-            x, y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            color,
-            life: 1,
-            decay: Math.random() * 0.05 + 0.02,
-            size: Math.random() * 4 + 2
-        });
-    }
+    fireLaser();
 }
 
-function addFloatingText(text, x, y, color) {
-    floaters.push({ text, x, y, color, life: 1, vy: -1.5 });
+function fireLaser() {
+    lasers.push({ x: player.x + player.w / 2 - 2, y: player.y, w: 4, h: 12 });
+    playSound('shoot');
 }
 
-function triggerDamage(amount) {
-    hp -= amount;
-    screenShake = 12;
-    playSfx('damage');
-    if (hp <= 0) {
-        hp = 0;
-        gameOver = true;
-    }
-}
-
-// --- ENTIDADES DE NIVELES ---
-
-// Nivel 1: Undertale Dodge
-let p1 = { x: 320, y: 380, vx: 0, vy: 0 };
-let bullets1 = [
-    { x: 220, y: 280, vx: 2.5, vy: 2 },
-    { x: 420, y: 280, vx: -2, vy: 2.5 },
-    { x: 320, y: 220, vx: 3, vy: -1.5 }
-];
-let targets1 = [
-    { text: "Navegador Web", correct: true, x: 180, y: 110, w: 130, h: 40 },
-    { text: "Procesador Texto", correct: false, x: 330, y: 110, w: 130, h: 40 },
-    { text: "Hoja de Cálculo", correct: false, x: 180, y: 170, w: 130, h: 40 },
-    { text: "Antivirus", correct: false, x: 330, y: 170, w: 130, h: 40 }
-];
-
-// Nivel 2: Space Shooter
-let p2 = { x: 320, y: 420 };
-let laserBullets = [];
-let lastShot = 0;
-let targets2 = [
-    { text: "RAM", correct: false, x: 60, y: 100, vx: 2.5 },
-    { text: "La Nube", correct: true, x: 200, y: 100, vx: 2.5 },
-    { text: "Cable", correct: false, x: 340, y: 100, vx: 2.5 },
-    { text: "Papelera", correct: false, x: 480, y: 100, vx: 2.5 }
-];
-
-// Nivel 3: Cyber Maze / Stealth
-let p3 = { x: 320, y: 430 };
-let hackers = [
-    { x: 150, y: 220, vx: 4 },
-    { x: 490, y: 300, vx: -5 },
-    { x: 250, y: 140, vx: 3.5 }
-];
-let doors = [
-    { text: "123456", correct: false, x: 100, y: 60, w: 110, h: 40 },
-    { text: "Xk9#mP$2!vQ", correct: true, x: 265, y: 60, w: 110, h: 40 },
-    { text: "password", correct: false, x: 430, y: 60, w: 110, h: 40 }
-];
-
-// Nivel 4: Catch Hardware
-let p4 = { x: 320, y: 420, w: 70, h: 14 };
-let caughtHardware = 0;
-let fallingItems = [];
-let spawnTimer = 0;
-
-// Nivel 5: Boss Wi-Fi Bullet Hell
-let p5 = { x: 320, y: 400 };
-let wifiWaves = [];
-let wifiTimer = 0;
-
-function getCurrentPlayer() {
-    if (currentLevel === 0) return p1;
-    if (currentLevel === 1) return p2;
-    if (currentLevel === 2) return p3;
-    if (currentLevel === 3) return p4;
-    if (currentLevel === 4) return p5;
-    return null;
-}
-
-function nextLevel() {
-    playSfx('win');
-    addExplosion(canvas.width/2, canvas.height/2, "#00f0ff", 30);
-    addFloatingText("¡NIVEL COMPLETADO! +100", canvas.width/2 - 90, 200, "#00f0ff");
-    score += 100;
-    currentLevel++;
-    if (currentLevel >= 5) gameWin = true;
-}
-
-function resetGame() {
-    currentLevel = 0;
-    score = 0;
-    hp = 100;
-    gameOver = false;
-    gameWin = false;
-    caughtHardware = 0;
-    p1.x = 320; p1.y = 380;
-    p2.x = 320;
-    p3.x = 320; p3.y = 430;
-    p4.x = 320;
-    p5.x = 320; p5.y = 400;
-}
-
-// --- BUCLE PRINCIPAL ---
-function gameLoop() {
-    // Screen Shake
-    ctx.save();
-    if (screenShake > 0) {
-        let rx = (Math.random() - 0.5) * screenShake;
-        let ry = (Math.random() - 0.5) * screenShake;
-        ctx.translate(rx, ry);
-        screenShake *= 0.85;
-        if (screenShake < 0.5) screenShake = 0;
-    }
-
+function updateInvaders() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Fondo de Estrellas Retro
-    ctx.fillStyle = "#ffffff";
-    stars.forEach(s => {
-        s.y += s.speed;
-        if (s.y > canvas.height) s.y = 0;
-        ctx.globalAlpha = Math.random() * 0.5 + 0.3;
-        ctx.fillRect(s.x, s.y, s.size, s.size);
-    });
-    ctx.globalAlpha = 1.0;
-
-    if (gameOver) {
-        drawCenterText("¡GAME OVER!", "#ff0055", 36, -20);
-        drawCenterText("Presiona Espacio o Toca para Reiniciar", "#ffffff", 16, 30);
-        if (keys["Space"]) resetGame();
-    } else if (gameWin) {
-        drawCenterText("¡ERES UN CRACK DE LA TECNOLOGÍA!", "#00ff66", 26, -30);
-        drawCenterText("Puntuación Final: " + score + " pts", "#00f0ff", 20, 10);
-        drawCenterText("Presiona Espacio o Toca para Jugar de nuevo", "#ffffff", 15, 60);
-        if (keys["Space"]) resetGame();
-    } else {
-        drawHUD();
-        if (currentLevel === 0) playLevel1();
-        else if (currentLevel === 1) playLevel2();
-        else if (currentLevel === 2) playLevel3();
-        else if (currentLevel === 3) playLevel4();
-        else if (currentLevel === 4) playLevel5();
-
-        updateParticles();
-        updateFloaters();
-    }
-
-    ctx.restore();
-    requestAnimationFrame(gameLoop);
-}
-
-// --- LÓGICA DETALLADA DE NIVELES ---
-
-// LEVEL 1: UNDERTALE BOX
-function playLevel1() {
-    drawText("NIVEL 1: Entra en la opción correcta. ¡Esquiva los ataques!", 15, 65, 13, "#ffcc00");
-
-    // Caja Undertale
-    const box = { x: 160, y: 220, w: 320, h: 200 };
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(box.x, box.y, box.w, box.h);
-
-    // Movimiento
-    moveSmooth(p1, 3.5);
-    p1.x = Math.max(box.x + 12, Math.min(box.x + box.w - 12, p1.x));
-    p1.y = Math.max(box.y + 12, Math.min(box.y + box.h - 12, p1.y));
-
-    // Dibujar Corazón Undertale
-    drawHeart(p1.x, p1.y, 10, "#ff0055");
-
-    // Proyectiles
-    bullets1.forEach(b => {
-        b.x += b.vx;
-        b.y += b.vy;
-        if (b.x < box.x + 8 || b.x > box.x + box.w - 8) b.vx *= -1;
-        if (b.y < box.y + 8 || b.y > box.y + box.h - 8) b.vy *= -1;
-
-        ctx.fillStyle = "#ffcc00";
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (Math.hypot(p1.x - b.x, p1.y - b.y) < 14) {
-            triggerDamage(1.2);
-            addExplosion(b.x, b.y, "#ffcc00", 4);
-        }
-    });
-
-    // Opciones arriba de la caja
-    targets1.forEach(t => {
-        ctx.fillStyle = "#1e1b4b";
-        ctx.fillRect(t.x, t.y, t.w, t.h);
-        ctx.strokeStyle = "#00f0ff";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(t.x, t.y, t.w, t.h);
-        drawText(t.text, t.x + 8, t.y + 24, 11, "#ffffff");
-
-        // Si el jugador rompe el borde superior de la caja alineado a una opción
-        if (p1.y <= box.y + 15 && p1.x > t.x && p1.x < t.x + t.w) {
-            if (t.correct) {
-                nextLevel();
-            } else {
-                triggerDamage(20);
-                addFloatingText("-20 HP Incorrecto", p1.x - 40, p1.y, "#ff0055");
-                p1.y += 50;
-            }
-        }
-    });
-}
-
-// LEVEL 2: SPACE SHOOTER
-function playLevel2() {
-    drawText("NIVEL 2: ¡Dispara a la opción de guardado remoto!", 15, 65, 13, "#ffcc00");
-
-    if (keys["ArrowLeft"] || keys["KeyA"]) p2.x -= 5;
-    if (keys["ArrowRight"] || keys["KeyD"]) p2.x += 5;
-    p2.x = Math.max(30, Math.min(canvas.width - 30, p2.x));
-
-    // Nave Estilo Arcade
-    ctx.fillStyle = "#00f0ff";
-    ctx.beginPath();
-    ctx.moveTo(p2.x, p2.y - 15);
-    ctx.lineTo(p2.x - 15, p2.y + 10);
-    ctx.lineTo(p2.x + 15, p2.y + 10);
-    ctx.closePath();
-    ctx.fill();
-
-    // Disparo
-    if ((keys["Space"] || keys["ArrowUp"] || keys["KeyW"]) && Date.now() - lastShot > 200) {
-        laserBullets.push({ x: p2.x, y: p2.y - 15 });
-        playSfx('shoot');
-        lastShot = Date.now();
-    }
-
-    laserBullets.forEach((b, index) => {
-        b.y -= 8;
-        ctx.fillStyle = "#ff0055";
-        ctx.fillRect(b.x - 2, b.y, 4, 12);
-
-        targets2.forEach(t => {
-            if (b.x > t.x && b.x < t.x + 90 && b.y > t.y && b.y < t.y + 35) {
-                laserBullets.splice(index, 1);
-                addExplosion(b.x, b.y, "#ff0055", 10);
-                if (t.correct) {
-                    nextLevel();
-                } else {
-                    triggerDamage(15);
-                    addFloatingText("¡Esa no es la respuesta!", t.x, t.y + 40, "#ff0055");
-                }
-            }
-        });
-    });
-
-    // Enemigos en movimiento
-    targets2.forEach(t => {
-        t.x += t.vx;
-        if (t.x < 10 || t.x > canvas.width - 100) t.vx *= -1;
-        ctx.fillStyle = "#0f172a";
-        ctx.fillRect(t.x, t.y, 90, 35);
-        ctx.strokeStyle = "#a855f7";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(t.x, t.y, 90, 35);
-        drawText(t.text, t.x + 10, t.y + 22, 12, "#ffffff");
-    });
-}
-
-// LEVEL 3: STEALTH
-function playLevel3() {
-    drawText("NIVEL 3: Esquiva a los Hackers y entra a la Clave Segura", 15, 65, 13, "#ffcc00");
-
-    moveSmooth(p3, 3.5);
-    p3.x = Math.max(20, Math.min(canvas.width - 20, p3.x));
-    p3.y = Math.max(60, Math.min(canvas.height - 20, p3.y));
-
-    // Jugador (Cyber Orb)
+    // Texto instructivo arriba
     ctx.fillStyle = "#00ff66";
-    ctx.beginPath();
-    ctx.arc(p3.x, p3.y, 10, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.font = "bold 14px Arial";
+    ctx.fillText("⚠️ ¡VIRUS DETECTADO! ¡ELIMÍNALOS A TODOS!", 110, 25);
 
-    // Hackers Patrol
-    hackers.forEach(h => {
-        h.x += h.vx;
-        if (h.x < 40 || h.x > canvas.width - 40) h.vx *= -1;
+    // Dibujar Jugador
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+    ctx.fillRect(player.x + 15, player.y - 8, 10, 8);
 
-        // Laser de escaneo
-        ctx.strokeStyle = "rgba(255, 0, 85, 0.25)";
-        ctx.lineWidth = 12;
-        ctx.beginPath();
-        ctx.moveTo(h.x, h.y - 10);
-        ctx.lineTo(h.x, h.y + 10);
-        ctx.stroke();
+    // Actualizar y Dibujar Láseres
+    ctx.fillStyle = "#ff0055";
+    lasers.forEach((l, index) => {
+        l.y -= 7;
+        ctx.fillRect(l.x, l.y, l.w, l.h);
 
-        drawText("👾", h.x - 12, h.y + 8, 22, "#ff0055");
-
-        if (Math.hypot(p3.x - h.x, p3.y - h.y) < 22) {
-            triggerDamage(2.5);
-            addExplosion(p3.x, p3.y, "#ff0055", 3);
-            p3.y += 25;
-        }
-    });
-
-    // Puertas
-    doors.forEach(d => {
-        ctx.fillStyle = "#022c22";
-        ctx.fillRect(d.x, d.y, d.w, d.h);
-        ctx.strokeStyle = "#00ff66";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(d.x, d.y, d.w, d.h);
-        drawText(d.text, d.x + 8, d.y + 24, 11, "#ffffff");
-
-        if (p3.x > d.x && p3.x < d.x + d.w && p3.y > d.y && p3.y < d.y + d.h) {
-            if (d.correct) {
-                nextLevel();
-            } else {
-                triggerDamage(20);
-                addFloatingText("¡Insegura!", d.x, d.y + 50, "#ff0055");
-                p3.y = 430;
+        // Colisión con Virus
+        viruses.forEach(v => {
+            if (v.alive && l.x > v.x && l.x < v.x + v.w && l.y > v.y && l.y < v.y + v.h) {
+                v.alive = false;
+                lasers.splice(index, 1);
             }
-        }
-    });
-}
-
-// LEVEL 4: CATCH HARDWARE
-function playLevel4() {
-    drawText(`NIVEL 4: Atrapa 3 componentes de HARDWARE (${caughtHardware}/3)`, 15, 65, 13, "#ffcc00");
-
-    if (keys["ArrowLeft"] || keys["KeyA"]) p4.x -= 6;
-    if (keys["ArrowRight"] || keys["KeyD"]) p4.x += 6;
-    p4.x = Math.max(p4.w/2, Math.min(canvas.width - p4.w/2, p4.x));
-
-    // Base Atrapadora
-    ctx.fillStyle = "#00f0ff";
-    ctx.fillRect(p4.x - p4.w/2, p4.y, p4.w, p4.h);
-
-    spawnTimer++;
-    if (spawnTimer % 35 === 0) {
-        const isHw = Math.random() > 0.45;
-        const hwList = ["Teclado ⌨️", "Ratón 🖱️", "Monitor 🖥️"];
-        const swList = ["Virus 🦠", "Photoshop 🎨", "Windows 🪟"];
-        fallingItems.push({
-            x: Math.random() * (canvas.width - 120) + 60,
-            y: 70,
-            isHardware: isHw,
-            text: isHw ? hwList[Math.floor(Math.random() * hwList.length)] : swList[Math.floor(Math.random() * swList.length)]
         });
+
+        if (l.y < 0) lasers.splice(index, 1);
+    });
+
+    // Mover y Dibujar Virus
+    let changeDir = false;
+    let aliveCount = 0;
+
+    viruses.forEach(v => {
+        if (!v.alive) return;
+        aliveCount++;
+        v.x += invaderSpeed * invaderDirection;
+
+        if (v.x > canvas.width - 40 || v.x < 10) changeDir = true;
+
+        // Dibujo de Virus Retro
+        ctx.fillStyle = "#ef4444";
+        ctx.fillRect(v.x, v.y, v.w, v.h);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(v.x + 5, v.y + 5, 5, 5);
+        ctx.fillRect(v.x + 20, v.y + 5, 5, 5);
+    });
+
+    if (changeDir) {
+        invaderDirection *= -1;
+        viruses.forEach(v => v.y += 10);
     }
 
-    fallingItems.forEach((item, index) => {
-        item.y += 3.8;
-        drawText(item.text, item.x - 20, item.y, 12, item.isHardware ? "#00ff66" : "#ff0055");
-
-        if (item.y >= p4.y - 10 && item.y <= p4.y + p4.h && Math.abs(item.x - p4.x) < p4.w/2 + 15) {
-            fallingItems.splice(index, 1);
-            if (item.isHardware) {
-                caughtHardware++;
-                playSfx('hit');
-                addExplosion(item.x, item.y, "#00ff66", 8);
-                if (caughtHardware >= 3) nextLevel();
-            } else {
-                triggerDamage(15);
-                addFloatingText("¡Eso es Software!", p4.x - 40, p4.y - 20, "#ff0055");
-            }
-        }
-    });
-}
-
-// LEVEL 5: BOSS BULLET HELL
-function playLevel5() {
-    drawText("NIVEL FINAL: ¡Esquiva las ondas Wi-Fi y llega al Router!", 15, 65, 13, "#ffcc00");
-
-    moveSmooth(p5, 3.5);
-    p5.x = Math.max(30, Math.min(canvas.width - 30, p5.x));
-    p5.y = Math.max(80, Math.min(canvas.height - 30, p5.y));
-
-    // Corazón Soul
-    drawHeart(p5.x, p5.y, 10, "#00f0ff");
-
-    // Boss Router
-    drawText("📶 ROUTER WI-FI", canvas.width/2 - 60, 100, 16, "#00ff66");
-    if (Math.hypot(p5.x - canvas.width/2, p5.y - 95) < 35) nextLevel();
-
-    wifiTimer++;
-    if (wifiTimer % 22 === 0) {
-        wifiWaves.push({ x: canvas.width/2, y: 95, r: 10 });
+    // Condición de Victoria
+    if (aliveCount === 0) {
+        canvas.style.display = "none";
+        triggerPopups(); // Pasar a la fase de Pop-ups de estafas
+        return;
     }
 
-    wifiWaves.forEach((w, index) => {
-        w.r += 3.2;
-        ctx.strokeStyle = "#ff0055";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
-        ctx.stroke();
+    requestAnimationFrame(updateInvaders);
+}
 
-        const d = Math.hypot(p5.x - w.x, p5.y - w.y);
-        if (Math.abs(d - w.r) < 8) {
-            triggerDamage(1.5);
-            addExplosion(p5.x, p5.y, "#ff0055", 2);
+// --- PASO 4: PANTALLAS EMERGENTES (ANTI-ESTAFAS) ---
+const scamMessages = [
+    "⚠️ ¡GANASTE UN IPHONE 17 PRO! Haz clic aquí para reclamar.",
+    "🚨 Su cuenta de banco ha sido SUSPENDIDA. Ingrese su clave.",
+    "💰 ¡Transferencia pendiente de $5,000 USD! Verifique CBU.",
+    "👾 99 Virus detectados en su dispositivo. Descargue AntivirusPro.exe"
+];
+
+function triggerPopups() {
+    let popupCount = 0;
+    const maxPopups = 6;
+
+    const interval = setInterval(() => {
+        playSound('pop');
+        createPopup(scamMessages[popupCount % scamMessages.length]);
+        popupCount++;
+
+        if (popupCount >= maxPopups) {
+            clearInterval(interval);
+            // Esperar unos segundos y limpiar la pantalla automáticamente
+            setTimeout(() => {
+                document.querySelectorAll('.popup-window').forEach(p => p.remove());
+                showFinalScreen();
+            }, 3500);
         }
+    }, 400);
+}
 
-        if (w.r > 450) wifiWaves.splice(index, 1);
+function createPopup(text) {
+    const pop = document.createElement("div");
+    pop.className = "popup-window";
+    
+    // Posición aleatoria en pantalla
+    const randomX = Math.floor(Math.random() * (window.innerWidth - 280));
+    const randomY = Math.floor(Math.random() * (window.innerHeight - 150));
+    pop.style.left = `${Math.max(10, randomX)}px`;
+    pop.style.top = `${Math.max(10, randomY)}px`;
+
+    pop.innerHTML = `
+        <div class="popup-header">
+            <span>⚠️ ALERTA DE SEGURIDAD</span>
+            <span style="cursor:pointer;" onclick="this.parentElement.parentElement.remove()">✕</span>
+        </div>
+        <div class="popup-body">
+            <p style="color:#0f172a; margin-bottom:5px;">${text}</p>
+            <button class="popup-btn" onclick="this.parentElement.parentElement.remove()">CERRAR / BLOQUEAR</button>
+        </div>
+    `;
+
+    document.body.appendChild(pop);
+}
+
+// --- PASO 5: PANTALLA FINAL Y BOTÓN "NO" ESCAPISTA ---
+function showFinalScreen() {
+    document.getElementById("finalPlayerName").innerText = playerName;
+    document.getElementById("finalCard").style.display = "block";
+    setupEvasiveButton();
+}
+
+function setupEvasiveButton() {
+    const btnNo = document.getElementById("btnNo");
+    const container = document.getElementById("feedbackArea");
+
+    // Posición inicial del botón No
+    btnNo.style.left = "180px";
+    btnNo.style.top = "10px";
+
+    function moveNoButton() {
+        playSound('dodge');
+        const containerRect = container.getBoundingClientRect();
+        const btnRect = btnNo.getBoundingClientRect();
+
+        const maxX = containerRect.width - btnRect.width - 20;
+        const maxY = containerRect.height - btnRect.height - 20;
+
+        const newX = Math.max(10, Math.floor(Math.random() * maxX));
+        const newY = Math.max(10, Math.floor(Math.random() * maxY));
+
+        btnNo.style.left = `${newX}px`;
+        btnNo.style.top = `${newY}px`;
+    }
+
+    btnNo.addEventListener("mouseover", moveNoButton);
+    btnNo.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        moveNoButton();
     });
 }
 
-// --- UTILS & RENDERING ---
-
-function moveSmooth(p, speed) {
-    if (keys["ArrowLeft"] || keys["KeyA"]) p.x -= speed;
-    if (keys["ArrowRight"] || keys["KeyD"]) p.x += speed;
-    if (keys["ArrowUp"] || keys["KeyW"]) p.y -= speed;
-    if (keys["ArrowDown"] || keys["KeyS"]) p.y += speed;
+function confirmYes() {
+    alert(`¡Gracias por tu respuesta, ${playerName}! 🎉 ¡Has completado con éxito la prueba tecno-gamer!`);
 }
-
-function drawHeart(x, y, size, color) {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(x - size/2, y - size/2, size/2, Math.PI, 0, false);
-    ctx.arc(x + size/2, y - size/2, size/2, Math.PI, 0, false);
-    ctx.lineTo(x, y + size);
-    ctx.closePath();
-    ctx.fill();
-}
-
-function updateParticles() {
-    particles.forEach((p, index) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= p.decay;
-        if (p.life <= 0) {
-            particles.splice(index, 1);
-        } else {
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = p.life;
-            ctx.fillRect(p.x, p.y, p.size, p.size);
-        }
-    });
-    ctx.globalAlpha = 1.0;
-}
-
-function updateFloaters() {
-    floaters.forEach((f, index) => {
-        f.y += f.vy;
-        f.life -= 0.02;
-        if (f.life <= 0) {
-            floaters.splice(index, 1);
-        } else {
-            drawText(f.text, f.x, f.y, 13, f.color);
-        }
-    });
-}
-
-function drawHUD() {
-    ctx.fillStyle = "#090d16";
-    ctx.fillRect(0, 0, canvas.width, 45);
-
-    // Barra de Vida Animada
-    ctx.fillStyle = "#334155";
-    ctx.fillRect(15, 12, 120, 16);
-    ctx.fillStyle = hp > 35 ? "#00ff66" : "#ff0055";
-    ctx.fillRect(15, 12, (hp / 100) * 120, 16);
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(15, 12, 120, 16);
-
-    drawText("HP: " + Math.ceil(hp), 20, 25, 11, "#000000");
-    drawText("SCORE: " + score, canvas.width - 130, 26, 14, "#00f0ff");
-}
-
-function drawText(text, x, y, size, color) {
-    ctx.fillStyle = color;
-    ctx.font = `bold ${size}px 'Courier New', monospace`;
-    ctx.fillText(text, x, y);
-}
-
-function drawCenterText(text, color, size, offsetY = 0) {
-    ctx.fillStyle = color;
-    ctx.font = `bold ${size}px 'Courier New', monospace`;
-    ctx.textAlign = "center";
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2 + offsetY);
-    ctx.textAlign = "start";
-}
-
-requestAnimationFrame(gameLoop);
 </script>
 </body>
 </html>
