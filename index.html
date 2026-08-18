@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Defense - Omega Virus</title>
+    <title>Cyber Defense - Omega Virus Flowey Edition</title>
+    <!-- Fuente Retro Tipografía Undertale -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'VT323', monospace;
         }
 
         body {
@@ -25,24 +27,44 @@
             position: relative;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
+        /* EFECTO DE LÍNEAS CRT EN TODA LA PÁGINA */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 500;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* CONTENEDOR PRINCIPAL INTERFAZ */
         .container {
             width: 90%;
             max-width: 650px;
-            background: #0f172a;
-            border: 3px solid #38bdf8;
+            background: #090d16;
+            border: 3px solid #00f0ff;
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
             text-align: center;
             position: relative;
             z-index: 10;
         }
 
         h1, h2 {
-            color: #38bdf8;
+            color: #00f0ff;
             margin-bottom: 15px;
             text-transform: uppercase;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px #ff0055;
+        }
+
+        p {
+            font-size: 1.4rem;
+            color: #cbd5e1;
         }
 
         input[type="text"] {
@@ -52,32 +74,37 @@
             border: 2px solid #334155;
             background: #020617;
             color: #00ff66;
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             margin-bottom: 20px;
             text-align: center;
             outline: none;
         }
 
         .btn {
-            background: #0284c7;
-            color: white;
+            background: #00f0ff;
+            color: #000;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 28px;
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(0,240,255,0.4);
         }
 
-        .btn:hover { background: #0369a1; }
+        .btn:hover {
+            background: #ff0055;
+            color: white;
+            box-shadow: 0 0 20px rgba(255,0,85,0.8);
+        }
 
-        /* --- LISTA DE PREGUNTAS Y ANIMACIÓN CAÍDA --- */
+        /* RESPUESTAS CAÍDAS CON FÍSICA Y ROTACIÓN */
         .answers-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-top: 15px;
-            position: relative;
         }
 
         .answer-btn {
@@ -86,29 +113,22 @@
             border: 2px solid #334155;
             padding: 14px;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 1.3rem;
             cursor: pointer;
             text-align: left;
-            transition: background 0.2s;
             position: relative;
         }
 
-        .answer-btn:hover {
-            background: #334155;
-            border-color: #38bdf8;
-        }
-
-        /* Animación Física de Caída de Respuestas */
         .fall-1 { animation: fallDown 0.8s forwards cubic-bezier(0.55, 0.055, 0.675, 0.19); }
         .fall-2 { animation: fallDown 1.0s forwards cubic-bezier(0.55, 0.055, 0.675, 0.19); }
         .fall-3 { animation: fallDown 1.2s forwards cubic-bezier(0.55, 0.055, 0.675, 0.19); }
 
         @keyframes fallDown {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(45deg); opacity: 0; }
+            100% { transform: translateY(120vh) rotate(65deg); opacity: 0; }
         }
 
-        /* --- BANNER VIRUS DETECTADO --- */
+        /* OVERLAY VIRUS DETECTADO */
         #warningOverlay {
             display: none;
             position: fixed;
@@ -118,44 +138,61 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            animation: flashRed 0.3s infinite alternate;
+            animation: flashRed 0.25s infinite alternate;
         }
 
         @keyframes flashRed {
-            from { background: rgba(185, 28, 28, 0.95); }
-            to { background: rgba(69, 10, 10, 0.98); }
+            from { background: rgba(220, 38, 38, 0.95); }
+            to { background: rgba(20, 0, 0, 0.98); }
         }
 
         .warning-symbol {
-            font-size: 80px;
-            margin-bottom: 10px;
-            animation: pulse 0.4s infinite alternate;
+            font-size: 100px;
+            animation: pulse 0.3s infinite alternate;
         }
 
         @keyframes pulse {
             from { transform: scale(1); }
-            to { transform: scale(1.2); }
+            to { transform: scale(1.25); }
         }
 
-        /* --- CANVAS DE JEFE OMEGA FLOWEY --- */
-        #bossCanvas {
+        /* CANVAS DEL JEFE OMEGA */
+        .canvas-wrapper {
+            position: relative;
             display: none;
-            border: 3px solid #ff0055;
+        }
+
+        #bossCanvas {
+            border: 4px solid #ff0055;
             border-radius: 8px;
             background-color: #000;
-            box-shadow: 0 0 35px rgba(255, 0, 85, 0.5);
+            box-shadow: 0 0 40px rgba(255, 0, 85, 0.6);
             max-width: 100%;
         }
 
-        /* --- ANUNCIOS POP-UP MASIVOS --- */
+        /* SHAKE EFFECT */
+        .shake {
+            animation: shakeAnim 0.15s infinite;
+        }
+
+        @keyframes shakeAnim {
+            0% { transform: translate(3px, 3px) rotate(0deg); }
+            20% { transform: translate(-3px, -3px) rotate(-1deg); }
+            40% { transform: translate(-5px, 0px) rotate(1deg); }
+            60% { transform: translate(5px, 3px) rotate(0deg); }
+            80% { transform: translate(3px, -3px) rotate(1deg); }
+            100% { transform: translate(-3px, 3px) rotate(-1deg); }
+        }
+
+        /* POPUPS ADWARE */
         .scam-popup {
             position: fixed;
-            width: 280px;
+            width: 290px;
             background: #f1f5f9;
             color: #0f172a;
             border: 3px solid #dc2626;
             border-radius: 6px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             z-index: 200;
             animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-family: Arial, sans-serif;
@@ -166,14 +203,14 @@
             color: white;
             padding: 6px 10px;
             font-weight: bold;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             display: flex;
             justify-content: space-between;
         }
 
         .scam-body {
             padding: 12px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             text-align: center;
         }
 
@@ -193,67 +230,69 @@
             to { transform: scale(1); }
         }
 
-        /* --- RELOJ DE LIMPIEZA --- */
+        /* TEMPORIZADOR */
         #timerBanner {
             display: none;
             position: fixed;
             top: 20px;
             background: #dc2626;
             color: #fff;
-            padding: 12px 25px;
+            padding: 10px 30px;
             border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.8rem;
             z-index: 300;
             border: 2px solid #fff;
-            box-shadow: 0 0 20px #dc2626;
+            box-shadow: 0 0 25px #dc2626;
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
-<!-- RELOJ DE SOBREVIVENCIA DE POPUPS -->
-<div id="timerBanner">🛡️ LIMPIANDO ADWARE EN PROCESO: <span id="timerSeconds">20</span>s</div>
+<!-- TEMPORIZADOR DE PURGA ADWARE -->
+<div id="timerBanner">🛡️ PURGANDO ADWARE Y TROYANOS: <span id="timerSeconds">20</span>s</div>
 
-<!-- 1. REGISTRO -->
+<!-- 1. REGISTRO DE EQUIPO -->
 <div class="container" id="welcomeCard">
-    <h1>👾 Misión Seguridad</h1>
-    <p>Ingresa el nombre de tu equipo para comenzar:</p>
+    <h1>👾 Misión Ciber-Defensa</h1>
+    <p>Ingresa el nombre de tu equipo para comenzar la prueba:</p>
+    <br>
     <input type="text" id="playerName" placeholder="Nombre de Equipo..." maxlength="20" autocomplete="off">
     <button class="btn" onclick="initQuiz()">Iniciar Test ➔</button>
 </div>
 
-<!-- 2. PREGUNTA INICIAL CON RESPUESTAS CAÍDAS -->
+<!-- 2. PREGUNTA NORMAL -->
 <div class="container" id="quizCard" style="display: none;">
     <h2>Pregunta 1/1</h2>
     <p style="margin-bottom: 20px; color: #94a3b8;">¿Cuál es la función principal de un Antivirus?</p>
-    <div class="answers-container" id="answersGroup">
+    <div class="answers-container">
         <button class="answer-btn" id="ans1" onclick="startCollapse()">A) Detectar y eliminar software malicioso</button>
         <button class="answer-btn" id="ans2" onclick="startCollapse()">B) Aumentar la velocidad de descarga</button>
         <button class="answer-btn" id="ans3" onclick="startCollapse()">C) Limpiar la pantalla físicamente</button>
     </div>
 </div>
 
-<!-- 3. OVERLAY DE VIRUS DETECTADO -->
+<!-- 3. BANNER VIRUS DETECTADO -->
 <div id="warningOverlay">
     <div class="warning-symbol">⚠️</div>
-    <h1 style="color: #fff; font-size: 2.5rem; text-shadow: 0 0 10px #000;">¡VIRUS DETECTADO!</h1>
-    <p style="color: #fca5a5; margin-top: 10px; font-size: 1.2rem;">SISTEMA COMPROMETIDO POR OMEGA-VIRUS.EXE</p>
+    <h1 style="color: #fff; font-size: 3.5rem; text-shadow: 0 0 15px #000;">¡VIRUS DETECTADO!</h1>
+    <p style="color: #fca5a5; font-size: 1.8rem;">SISTEMA SECUESTRADO POR OMEGA-VIRUS.EXE</p>
 </div>
 
-<!-- 4. BOSS CANVAS (OMEGA FLOWEY STYLE) -->
-<canvas id="bossCanvas" width="600" height="450"></canvas>
+<!-- 4. CONTENEDOR CANVAS Y COMBATE DE JEFE -->
+<div class="canvas-wrapper" id="canvasWrapper">
+    <canvas id="bossCanvas" width="700" height="520"></canvas>
+</div>
 
-<!-- 5. PANTALLA EN ESPERA DE INSTRUCCIONES -->
+<!-- 5. ESTADO DE ESPERA -->
 <div class="container" id="standbyCard" style="display: none;">
-    <h2 style="color: #00ff66;">✅ OMEGA-VIRUS ELIMINADO</h2>
-    <p>Se ha completado la purificación del sistema y el bloqueo de Adware.</p>
+    <h2 style="color: #00ff66;">✅ OMEGA-VIRUS PURGADO</h2>
+    <p>El núcleo del sistema ha sido restaurado con éxito.</p>
     <hr style="border-color: #334155; margin: 15px 0;">
-    <p style="color: #38bdf8; font-weight: bold;">Esperando siguientes instrucciones...</p>
+    <p style="color: #00f0ff; font-weight: bold; font-size: 1.6rem;">Esperando siguientes instrucciones...</p>
 </div>
 
 <script>
-// --- AUDIO SYNTHESIS (Web Audio API) ---
+// --- SINTETIZADOR DE SONIDO (AUDIO WEB API) ---
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -268,27 +307,46 @@ function playSound(type) {
 
         if (type === 'alarm') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(800, now);
-            osc.frequency.linearRampToValueAtTime(300, now + 0.3);
-            gain.gain.setValueAtTime(0.25, now);
-            osc.start(now); osc.stop(now + 0.3);
-        } else if (type === 'shoot') {
+            osc.frequency.setValueAtTime(900, now);
+            osc.frequency.linearRampToValueAtTime(300, now + 0.25);
+            gain.gain.setValueAtTime(0.2, now);
+            osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'laugh') {
+            // Risa macabra Omega Flowey sintetizada
+            for (let i = 0; i < 6; i++) {
+                let o = audioCtx.createOscillator();
+                let g = audioCtx.createGain();
+                o.type = 'sawtooth';
+                o.connect(g); g.connect(audioCtx.destination);
+                let t = now + i * 0.12;
+                o.frequency.setValueAtTime(180 - i * 15, t);
+                o.frequency.linearRampToValueAtTime(70, t + 0.1);
+                g.gain.setValueAtTime(0.25, t);
+                o.start(t); o.stop(t + 0.1);
+            }
+        } else if (type === 'laser') {
             osc.type = 'square';
+            osc.frequency.setValueAtTime(1200, now);
+            osc.frequency.exponentialRampToValueAtTime(100, now + 0.4);
+            gain.gain.setValueAtTime(0.25, now);
+            osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'shoot') {
+            osc.type = 'triangle';
             osc.frequency.setValueAtTime(600, now);
-            osc.frequency.exponentialRampToValueAtTime(150, now + 0.08);
-            gain.gain.setValueAtTime(0.1, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+            gain.gain.setValueAtTime(0.12, now);
             osc.start(now); osc.stop(now + 0.08);
         } else if (type === 'hit') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.setValueAtTime(120, now);
             osc.frequency.linearRampToValueAtTime(40, now + 0.1);
-            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.setValueAtTime(0.25, now);
             osc.start(now); osc.stop(now + 0.1);
         } else if (type === 'pop') {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(900, now);
-            osc.frequency.setValueAtTime(1300, now + 0.04);
-            gain.gain.setValueAtTime(0.12, now);
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.setValueAtTime(1400, now + 0.05);
+            gain.gain.setValueAtTime(0.1, now);
             osc.start(now); osc.stop(now + 0.08);
         }
     } catch(e){}
@@ -297,20 +355,20 @@ function playSound(type) {
 let teamName = "";
 const canvas = document.getElementById("bossCanvas");
 const ctx = canvas.getContext("2d");
+const mainBody = document.getElementById("mainBody");
 
 function initQuiz() {
     const input = document.getElementById("playerName").value.trim();
-    teamName = input !== "" ? input : "Equipo Alfa";
+    teamName = input !== "" ? input : "Equipo Ciber";
     document.getElementById("welcomeCard").style.display = "none";
     document.getElementById("quizCard").style.display = "block";
 }
 
-// --- PASO 1: CAÍDA DE RESPUESTAS Y ALERTA VIRUS ---
+// --- PASO 1: CAÍDA DE LAS RESPUESTAS ---
 function startCollapse() {
     document.getElementById("ans1").classList.add("fall-1");
     document.getElementById("ans2").classList.add("fall-2");
     document.getElementById("ans3").classList.add("fall-3");
-
     playSound('alarm');
 
     setTimeout(() => {
@@ -318,32 +376,55 @@ function startCollapse() {
         const warning = document.getElementById("warningOverlay");
         warning.style.display = "flex";
 
-        let alarmInterval = setInterval(() => playSound('alarm'), 350);
+        let alarmInterval = setInterval(() => playSound('alarm'), 300);
 
         setTimeout(() => {
             clearInterval(alarmInterval);
             warning.style.display = "none";
-            canvas.style.display = "block";
-            startBossFight();
+            document.getElementById("canvasWrapper").style.display = "block";
+            initBossFight();
         }, 2200);
-    }, 1000);
+    }, 900);
 }
 
-// --- PASO 2: PELEA DE JEFE OMEGA FLOWEY (CIBERNÉTICO) ---
-let player = { x: 290, y: 390, size: 14, speed: 5 };
-let boss = { x: 300, y: 130, hp: 600, maxHp: 600, eyeAngle: 0, expression: 0 };
-let playerBullets = [];
-let bossBullets = [];
-let bossLasers = [];
-let keys = {};
-let gameLoopId = null;
+// --- PASO 2: PRESENTACIÓN CINEMÁTICA Y COMBATE OMEGA FLOWEY ---
+let gameState = 'INTRO'; // 'INTRO', 'FIGHT', 'DEFEATED'
+let introFrame = 0;
 let frameCount = 0;
 
-function startBossFight() {
+// Estado del Jugador (Corazón Undertale)
+let player = { x: 350, y: 440, size: 12, speed: 5.5 };
+
+// Estado del Jefe Omega
+let boss = {
+    x: 350, y: 160,
+    hp: 800, maxHp: 800,
+    displayHp: 0,
+    faceMode: 'SMILE', // 'SMILE', 'SCREAM', 'GLITCH'
+    laserCharging: false,
+    laserTimer: 0,
+    laserX: 350
+};
+
+let playerBullets = [];
+let bossBullets = [];
+let cyberVines = [];
+let keys = {};
+
+function initBossFight() {
+    // Generar tuberías/vianas metálicas
+    for (let i = 0; i < 8; i++) {
+        cyberVines.push({
+            side: i % 2 === 0 ? 'LEFT' : 'RIGHT',
+            y: 40 + i * 50,
+            length: 0,
+            maxLength: 180 + Math.random() * 80
+        });
+    }
+
     window.addEventListener("keydown", e => keys[e.code] = true);
     window.addEventListener("keyup", e => keys[e.code] = false);
 
-    // Controles táctiles/Mouse
     canvas.addEventListener("mousemove", e => {
         const rect = canvas.getBoundingClientRect();
         player.x = e.clientX - rect.left;
@@ -359,152 +440,311 @@ function startBossFight() {
         firePlayerBullet();
     });
 
-    gameLoopId = requestAnimationFrame(updateBossFight);
+    requestAnimationFrame(bossLoop);
 }
 
 function firePlayerBullet() {
-    playerBullets.push({ x: player.x, y: player.y - 10 });
+    if (gameState !== 'FIGHT') return;
+    playerBullets.push({ x: player.x, y: player.y - 12 });
     playSound('shoot');
 }
 
-function updateBossFight() {
+// --- BUCLE PRINCIPAL DE ANIMACIÓN ---
+function bossLoop() {
     frameCount++;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Movimiento Teclado Jugador
+    if (gameState === 'INTRO') {
+        renderIntroPresentation();
+    } else if (gameState === 'FIGHT') {
+        updateAndRenderFight();
+    }
+
+    requestAnimationFrame(bossLoop);
+}
+
+// --- PRESENTACIÓN STYLE OMEGA FLOWEY ---
+function renderIntroPresentation() {
+    introFrame++;
+
+    // 1. Crecen las tuberías cibernéticas laterales
+    cyberVines.forEach(v => {
+        if (v.length < v.maxLength) v.length += 4;
+        drawCyberVine(v);
+    });
+
+    // 2. Cae la pantalla CRT del Jefe
+    let monitorY = Math.min(150, -100 + introFrame * 3);
+    drawCRTMonitor(350, monitorY, introFrame);
+
+    // 3. Encendido de Pantalla y Risa Macabra
+    if (introFrame === 70) {
+        playSound('laugh');
+        mainBody.classList.add("shake");
+    }
+
+    if (introFrame > 70) {
+        drawFloweyFace(350, monitorY, 'GLITCH');
+    }
+
+    // 4. Se quita el Shake y sale la Barra de Vida Carga Dramática
+    if (introFrame === 130) {
+        mainBody.classList.remove("shake");
+    }
+
+    if (introFrame > 130) {
+        drawFloweyFace(350, monitorY, 'SMILE');
+        if (boss.displayHp < boss.maxHp) {
+            boss.displayHp += 15;
+            playSound('hit');
+        } else {
+            // Título de Batalla
+            ctx.fillStyle = "#ff0055";
+            ctx.font = "bold 28px 'VT323', monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("¡OMEGA-VIRUS.EXE DESAFIÓ A SU EQUIPO!", 350, 310);
+        }
+    }
+
+    // Dibujar Barra de Vida Intro
+    drawHealthBar(boss.displayHp);
+
+    if (introFrame > 200) {
+        gameState = 'FIGHT';
+        boss.displayHp = boss.maxHp;
+    }
+}
+
+// --- COMBATE ACTIVO ---
+function updateAndRenderFight() {
+    // Controles Teclado
     if (keys["ArrowLeft"] || keys["KeyA"]) player.x -= player.speed;
     if (keys["ArrowRight"] || keys["KeyD"]) player.x += player.speed;
     if (keys["ArrowUp"] || keys["KeyW"]) player.y -= player.speed;
     if (keys["ArrowDown"] || keys["KeyS"]) player.y += player.speed;
-    if (keys["Space"] && frameCount % 6 === 0) firePlayerBullet();
+    if (keys["Space"] && frameCount % 5 === 0) firePlayerBullet();
 
-    player.x = Math.max(15, Math.min(canvas.width - 15, player.x));
-    player.y = Math.max(220, Math.min(canvas.height - 15, player.y));
+    // Límites de pantalla
+    player.x = Math.max(20, Math.min(canvas.width - 20, player.x));
+    player.y = Math.max(260, Math.min(canvas.height - 20, player.y));
 
-    // Dibujar Jugador (Corazón Soul Undertale)
-    drawHeart(player.x, player.y, player.size, "#00ff66");
+    // Dibujar Vianas Cibernéticas
+    cyberVines.forEach(v => drawCyberVine(v));
 
-    // DIBUJAR JEFE OMEGA FLOWEY CIBERNÉTICO
-    drawOmegaBoss();
+    // Dibujar Monitor y Cara
+    boss.faceMode = (frameCount % 120 < 20) ? 'SCREAM' : (frameCount % 60 < 10 ? 'GLITCH' : 'SMILE');
+    drawCRTMonitor(350, 150, frameCount);
+    drawFloweyFace(350, 150, boss.faceMode);
 
-    // Actualizar Bales Jugador
+    // ATAQUE 1: RAYO LÁSER DE OMEGA (Cargado con advertencia)
+    if (frameCount % 180 === 0) {
+        boss.laserCharging = true;
+        boss.laserTimer = 0;
+        boss.laserX = player.x; // Apunta a la posición actual del jugador
+    }
+
+    if (boss.laserCharging) {
+        boss.laserTimer++;
+        // Advertencia roja
+        ctx.strokeStyle = "rgba(255, 0, 85, 0.4)";
+        ctx.lineWidth = 30;
+        ctx.beginPath();
+        ctx.moveTo(boss.laserX, 180);
+        ctx.lineTo(boss.laserX, canvas.height);
+        ctx.stroke();
+
+        if (boss.laserTimer > 40) { // Disparo de Láser Gigante
+            playSound('laser');
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(boss.laserX - 35, 180, 70, canvas.height);
+            ctx.fillStyle = "#00f0ff";
+            ctx.fillRect(boss.laserX - 20, 180, 40, canvas.height);
+            mainBody.classList.add("shake");
+            setTimeout(() => mainBody.classList.remove("shake"), 200);
+
+            boss.laserCharging = false;
+        }
+    }
+
+    // ATAQUE 2: PROYECTILES EN ESPIRAL
+    if (frameCount % 30 === 0) {
+        let angle = (frameCount * 0.1);
+        bossBullets.push({ x: 350, y: 180, vx: Math.cos(angle) * 4, vy: Math.sin(angle) * 4 });
+        bossBullets.push({ x: 350, y: 180, vx: -Math.cos(angle) * 4, vy: -Math.sin(angle) * 4 });
+    }
+
+    // Actualizar Proyectiles del Jefe
+    ctx.fillStyle = "#ff0055";
+    bossBullets.forEach((b, i) => {
+        b.x += b.vx;
+        b.y += b.vy;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (b.y > canvas.height || b.x < 0 || b.x > canvas.width) bossBullets.splice(i, 1);
+    });
+
+    // Actualizar Proyectiles del Jugador
     ctx.fillStyle = "#00ff66";
-    playerBullets.forEach((b, i) => {
-        b.y -= 8;
-        ctx.fillRect(b.x - 2, b.y, 4, 10);
+    playerBullets.forEach((pb, i) => {
+        pb.y -= 9;
+        ctx.fillRect(pb.x - 3, pb.y, 6, 14);
 
         // Impacto en el Jefe
-        if (Math.hypot(b.x - boss.x, b.y - boss.y) < 70) {
-            boss.hp -= 12;
+        if (Math.hypot(pb.x - 350, pb.y - 150) < 90) {
+            boss.hp -= 10;
             playSound('hit');
             playerBullets.splice(i, 1);
         }
     });
 
-    // ATAQUES DEL JEFE
-    // 1. Anillo de Proyectiles Glitch
-    if (frameCount % 45 === 0) {
-        for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
-            bossBullets.push({
-                x: boss.x, y: boss.y + 20,
-                vx: Math.cos(a) * 3,
-                vy: Math.sin(a) * 3
-            });
-        }
-    }
+    // Dibujar Corazón Soul del Jugador (Undertale)
+    drawUndertaleSoul(player.x, player.y);
 
-    // Dibujar Proyectiles del Jefe
-    ctx.fillStyle = "#ff0055";
-    bossBullets.forEach((bb, i) => {
-        bb.x += bb.vx;
-        bb.y += bb.vy;
-        ctx.beginPath();
-        ctx.arc(bb.x, bb.y, 6, 0, Math.PI * 2);
-        ctx.fill();
+    // Dibujar Barra de Vida
+    drawHealthBar(boss.hp);
 
-        if (bb.y > canvas.height || bb.x < 0 || bb.x > canvas.width) {
-            bossBullets.splice(i, 1);
-        }
-    });
-
-    // BARRA DE VIDA DEL JEFE
-    ctx.fillStyle = "#1e293b";
-    ctx.fillRect(50, 15, 500, 18);
-    ctx.fillStyle = "#ff0055";
-    ctx.fillRect(50, 15, Math.max(0, (boss.hp / boss.maxHp) * 500), 18);
-    ctx.strokeStyle = "#ffffff";
-    ctx.strokeRect(50, 15, 500, 18);
-
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 12px Courier New";
-    ctx.fillText("JEFE: OMEGA-VIRUS.EXE", 55, 29);
-
-    // VICTORIA SOBRE EL JEFE
+    // CONDICIÓN DE VICTORIA
     if (boss.hp <= 0) {
-        canvas.style.display = "none";
+        gameState = 'DEFEATED';
+        document.getElementById("canvasWrapper").style.display = "none";
         triggerMassiveScamPopups();
-        return;
     }
-
-    requestAnimationFrame(updateBossFight);
 }
 
-function drawOmegaBoss() {
-    // Tentáculos metálicos laterales
-    ctx.strokeStyle = "#334155";
-    ctx.lineWidth = 8;
+// --- DIBUJO VECTORIAL DEL JEFE OMEGA ---
+function drawCRTMonitor(x, y, frame) {
+    // Brazos Robóticos Pincers
+    ctx.strokeStyle = "#475569";
+    ctx.lineWidth = 12;
     ctx.beginPath();
-    ctx.moveTo(boss.x - 60, boss.y);
-    ctx.quadraticCurveTo(boss.x - 140, boss.y + Math.sin(frameCount*0.1)*30, boss.x - 180, boss.y + 100);
-    ctx.moveTo(boss.x + 60, boss.y);
-    ctx.quadraticCurveTo(boss.x + 140, boss.y + Math.sin(frameCount*0.1)*30, boss.x + 180, boss.y + 100);
+    ctx.moveTo(x - 90, y);
+    ctx.lineTo(x - 220, y + Math.sin(frame * 0.1) * 20);
+    ctx.moveTo(x + 90, y);
+    ctx.lineTo(x + 220, y + Math.sin(frame * 0.1) * 20);
     ctx.stroke();
 
-    // Cabeza Monitor CRT Grotesco
-    ctx.fillStyle = "#111827";
-    ctx.fillRect(boss.x - 80, boss.y - 60, 160, 120);
-    ctx.strokeStyle = "#ff0055";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(boss.x - 80, boss.y - 60, 160, 120);
+    // Carcasa Monitor CRT Retro
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(x - 110, y - 80, 220, 160);
+    ctx.strokeStyle = "#00f0ff";
+    ctx.lineWidth = 5;
+    ctx.strokeRect(x - 110, y - 80, 220, 160);
 
-    // Ojos Glitch
-    ctx.fillStyle = "#ff0055";
-    ctx.beginPath();
-    ctx.arc(boss.x - 30, boss.y - 15, 18 + Math.sin(frameCount*0.2)*3, 0, Math.PI * 2);
-    ctx.arc(boss.x + 30, boss.y - 15, 18 + Math.cos(frameCount*0.2)*3, 0, Math.PI * 2);
-    ctx.fill();
+    // Fondo Pantalla CRT con Estática
+    ctx.fillStyle = "#05050d";
+    ctx.fillRect(x - 95, y - 68, 190, 136);
+}
 
-    ctx.fillStyle = "#000";
-    ctx.fillRect(boss.x - 34, boss.y - 18, 8, 8);
-    ctx.fillRect(boss.x + 26, boss.y - 18, 8, 8);
+function drawFloweyFace(x, y, mode) {
+    let eyeOffsetX = (player.x - x) * 0.04;
+    let eyeOffsetY = (player.y - y) * 0.04;
 
-    // Boca Dientes Digitales
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(boss.x - 40, boss.y + 20, 80, 20);
-    ctx.fillStyle = "#000";
-    for(let i = -35; i < 35; i += 12) {
-        ctx.fillRect(boss.x + i, boss.y + 20, 4, 20);
+    if (mode === 'SMILE') {
+        // Ojos Creepy que siguen al jugador
+        ctx.fillStyle = "#ff0055";
+        ctx.beginPath();
+        ctx.arc(x - 40, y - 20, 22, 0, Math.PI * 2);
+        ctx.arc(x + 40, y - 20, 22, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(x - 40 + eyeOffsetX, y - 20 + eyeOffsetY, 9, 0, Math.PI * 2);
+        ctx.arc(x + 40 + eyeOffsetX, y - 20 + eyeOffsetY, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sonrisa de Dientes Macabra
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(x, y + 15, 45, 0, Math.PI, false);
+        ctx.fill();
+
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 3;
+        for (let i = -30; i <= 30; i += 10) {
+            ctx.beginPath();
+            ctx.moveTo(x + i, y + 15);
+            ctx.lineTo(x + i, y + 45);
+            ctx.stroke();
+        }
+    } else if (mode === 'SCREAM') {
+        // Ojos Gigantes Perturbadores
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x - 65, y - 45, 45, 45);
+        ctx.fillRect(x + 20, y - 45, 45, 45);
+        ctx.fillStyle = "#ff0055";
+        ctx.fillRect(x - 50 + eyeOffsetX, y - 35 + eyeOffsetY, 18, 18);
+        ctx.fillRect(x + 35 + eyeOffsetX, y - 35 + eyeOffsetY, 18, 18);
+
+        // Boca Abierta Gritando
+        ctx.fillStyle = "#ff0055";
+        ctx.fillRect(x - 45, y + 5, 90, 45);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(x - 35, y + 15, 70, 25);
+    } else if (mode === 'GLITCH') {
+        // Pantalla con Ruido/Glitch
+        for (let i = 0; i < 20; i++) {
+            ctx.fillStyle = Math.random() > 0.5 ? "#ff0055" : "#00f0ff";
+            ctx.fillRect(x - 90 + Math.random() * 180, y - 60 + Math.random() * 120, 40, 8);
+        }
     }
 }
 
-function drawHeart(x, y, size, color) {
-    ctx.fillStyle = color;
+function drawCyberVine(v) {
+    ctx.strokeStyle = "#15803d";
+    ctx.lineWidth = 14;
     ctx.beginPath();
-    ctx.arc(x - size/2, y - size/2, size/2, Math.PI, 0, false);
-    ctx.arc(x + size/2, y - size/2, size/2, Math.PI, 0, false);
-    ctx.lineTo(x, y + size);
-    ctx.closePath();
+    let startX = v.side === 'LEFT' ? 0 : canvas.width;
+    let endX = v.side === 'LEFT' ? v.length : canvas.width - v.length;
+    ctx.moveTo(startX, v.y);
+    ctx.lineTo(endX, v.y + Math.sin(frameCount * 0.05 + v.y) * 15);
+    ctx.stroke();
+
+    // Nodos cibernéticos que brillan
+    ctx.fillStyle = "#00ff66";
+    ctx.beginPath();
+    ctx.arc(endX, v.y, 8, 0, Math.PI * 2);
     ctx.fill();
 }
 
-// --- PASO 3: POP-UPS MASIVOS Y TEMPORIZADOR DE 20 SEGUNDOS ---
+function drawUndertaleSoul(x, y) {
+    ctx.fillStyle = "#ff0000";
+    ctx.shadowColor = "#ff0000";
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(x - 6, y - 6, 6, Math.PI, 0, false);
+    ctx.arc(x + 6, y - 6, 6, Math.PI, 0, false);
+    ctx.lineTo(x, y + 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0; // reset
+}
+
+function drawHealthBar(hpValue) {
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(100, 20, 500, 22);
+    ctx.fillStyle = "#ff0055";
+    ctx.fillRect(100, 20, Math.max(0, (hpValue / boss.maxHp) * 500), 22);
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(100, 20, 500, 22);
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px 'VT323', monospace";
+    ctx.textAlign = "left";
+    ctx.fillText(`JEFE: OMEGA-VIRUS.EXE [${Math.max(0, Math.floor(hpValue))}/${boss.maxHp} HP]`, 110, 37);
+}
+
+// --- PASO 3: LLUVIA MASIVA DE ANUNCIOS Y TIMING DE 20 SEGUNDOS ---
 const scamTexts = [
-    "⚠️ ¡GANASTE UN IPHONE 17 PRO! Clic aquí",
+    "⚠️ ¡GANASTE UN IPHONE 17 PRO! Haz clic",
     "🚨 Su cuenta de banco ha sido BLOQUEADA.",
     "💰 Transfiera $1,000 USD para liberar archivos.",
     "👾 999 VIRUS DETECTADOS. Descargue CleanPC.exe",
-    "🛑 ¡ALERTA DE SEGURIDAD CRÍTICA!",
-    "🎁 ¡Felicidades Usuario! Ganaste un premio."
+    "🛑 ¡ALERTA CRÍTICA DE CIBERSEGURIDAD!",
+    "🎁 ¡Felicidades! Fuiste seleccionado."
 ];
 
 function triggerMassiveScamPopups() {
@@ -514,13 +754,13 @@ function triggerMassiveScamPopups() {
 
     let timeLeft = 20;
 
-    // Generar Pop-ups masivos continuos
+    // Inundación masiva de pop-ups cada 200ms
     const popupInterval = setInterval(() => {
         createScamPopup(scamTexts[Math.floor(Math.random() * scamTexts.length)]);
         playSound('pop');
-    }, 250);
+    }, 200);
 
-    // Reloj de cuenta regresiva de 20 segundos
+    // Contador regresivo
     const countdown = setInterval(() => {
         timeLeft--;
         timerSeconds.innerText = timeLeft;
@@ -530,10 +770,10 @@ function triggerMassiveScamPopups() {
             clearInterval(countdown);
             timerBanner.style.display = "none";
 
-            // Eliminar todos los pop-ups de la pantalla
+            // Eliminar todos los pop-ups de pantalla
             document.querySelectorAll(".scam-popup").forEach(el => el.remove());
 
-            // Mostrar pantalla final de espera de instrucciones
+            // Pantalla final en espera
             document.getElementById("standbyCard").style.display = "block";
         }
     }, 1000);
@@ -550,12 +790,12 @@ function createScamPopup(text) {
 
     pop.innerHTML = `
         <div class="scam-header">
-            <span>⚠️ ADVERTENCIA</span>
+            <span>⚠️ ALERTA DE SEGURIDAD</span>
             <span style="cursor:pointer;" onclick="this.parentElement.parentElement.remove()">✕</span>
         </div>
         <div class="scam-body">
             <p>${text}</p>
-            <button class="scam-btn" onclick="this.parentElement.parentElement.remove()">CERRAR</button>
+            <button class="scam-btn" onclick="this.parentElement.parentElement.remove()">BLOQUEAR</button>
         </div>
     `;
 
